@@ -17,17 +17,15 @@ workingDir<-as.character((read.table('HCRwd.info'))[1,1])
 #setwd<-pathWd
 
 ##======WELCOME=========================================================================================
-    # source ('prjSettings.R')
-    # tool_prjSettings <- 'prjSettings'
-    # moduleUI_prjSettings<- paste0 (tool_prjSettings, '_UI')
-    # moduleLoad_prjSettings<- paste0 (tool_prjSettings,'_Server')
-    # output$prjSetPlot<-renderUI ({
-    # get(moduleUI_prjSettings) (tool_prjSettings,label='helpingUI')
-    # })
-    # loadApp_prjSettings <-  callModule(get(moduleLoad_prjSettings), tool_prjSettings,
-    #                                   stringsAsFactors = FALSE)
 
-
+    tool_prjSettings<-'prjSettings'
+    moduleUI_prjSettings<-paste0 (tool_prjSettings, '_UI')
+    moduleLoad_prjSettings<-paste0 (tool_prjSettings,'_Server')
+    output$prjSettingsSlot<-shiny::renderUI ({
+    get(moduleUI_prjSettings)(tool_prjSettings,label='prjSettings')
+    })
+    loadApp_prjSettings<-shiny::callModule(get(moduleLoad_prjSettings),
+                                           tool_prjSettings)
 
 
     shiny::observeEvent (input$mainNav,{

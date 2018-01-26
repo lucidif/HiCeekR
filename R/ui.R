@@ -21,8 +21,8 @@ ui<-shiny::shinyUI (
                             shiny::uiOutput ('prjSetPlot')
                             ),
 
-                shiny::tabPanel ('Analysis',
-                            shiny::uiOutput ('anSetPlot')
+                shiny::tabPanel ('Settings',
+                            shiny::uiOutput ('prjSettingsSlot')
                             ),
 
                     shiny::tabPanel ('Pre-Processing',
