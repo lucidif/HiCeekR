@@ -32,7 +32,7 @@ setHCRwd=function(path){
 #' @export
 makeHCRwd=function(path){
     mainFolder=paste0(path,"HiCeekRwd/")
-    SubFolder_lv1<-c('Projects','RefGenome','Annotations')
+    SubFolder_lv1<-c('Projects','RefGenomes','Annotations')
     dir.create (mainFolder, showWarnings=TRUE, recursive=FALSE)
     len=length(SubFolder_lv1)
     for (ls in 1:len){
@@ -72,7 +72,7 @@ makeHCRprj=function (name, path){
     ##------------Exp
 
     zeroLevel<-'ProjectData'
-    ProjectData_SubFolder_lv1<-c('Hi-C','Epi','Exp')
+    ProjectData_SubFolder_lv1<-c('Hi-C','Epi','Other')
     #,'Genomes')
 
     ##when you add new folder in project_folder folder add it to zeroLevel array
@@ -98,7 +98,8 @@ makeHCRprj=function (name, path){
 
     ##for element in ProjectData=====================
     for(ls in 1:lenSecond){
-        secondSub<-paste0 (mainFolder,'ProjectData/', ProjectData_SubFolder_lv1[ls], '/')
+        secondSub<-paste0 (mainFolder,'ProjectData/',
+                           ProjectData_SubFolder_lv1[ls], '/')
 
         dir.create (secondSub, showWarnings=TRUE, recursive=FALSE)
 
@@ -109,3 +110,33 @@ makeHCRprj=function (name, path){
     #=============================================================
 
 }
+
+
+makeHCRan<-function(name, prjPath, infoTable){
+    mainFolder<-paste0(prjPath,name,"/")
+    dir.create(mainFolder,showWarnings=TRUE, recursive=FALSE)
+
+    lv1<-c("SysOut", "Results")
+    lv2<-c("Pre-Processing", "Binning", "Normalization", "Downstream",
+            "Visualization", "Report")
+
+    #dir creation
+    for(i in 1:length(lv1)){
+        lv1path<-paste0(mainFolder,lv1[i],"/")
+        dir.create(lv1path)
+        for(j in 1:length(lv2)){
+            dir.create(paste0(lv1path,lv2[j]))
+        }
+    }
+
+    #create info file
+    #control table
+    infoTable<-testInfoTable(infoTable)
+    write.table(infoTable,paste0(mainFolder,"info.tsv"),
+                sep="\t",
+                quote=FALSE,
+                col.names=FALSE,
+                row.names=TRUE)
+
+}
+
