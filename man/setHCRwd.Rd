@@ -2,7 +2,7 @@
 % Please edit documentation in R/vFun_prjManager.R
 \name{setHCRwd}
 \alias{setHCRwd}
-\title{set data folder}
+\title{setHCRwd}
 \usage{
 setHCRwd(path)
 }
@@ -10,7 +10,7 @@ setHCRwd(path)
 \item{path}{character vector that contain folder path}
 }
 \value{
-None
+HCRwd.info file that contain the path of HiCeekR woorking directory
 }
 \description{
 set folder in which HiCeekR works

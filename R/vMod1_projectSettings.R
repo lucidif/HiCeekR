@@ -1,3 +1,12 @@
+#' prjSettings_UI
+#'
+#' @param id
+#' @param label
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
 prjSettings_UI <- function(id, label="prjSettings"){
     ns <- shiny::NS(id)
     shiny::fluidPage(
@@ -40,7 +49,20 @@ prjSettings_UI <- function(id, label="prjSettings"){
     )
 }
 
-prjSettings_Server <- function(input, output, session){
+#' prjSettings_Server
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param prjManExport
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
+prjSettings_Server <- function(input, output, session, prjManExport){
+
+    #preliminary stataments==============================
     nspace<-session$ns
     workingDir<-as.character((read.table('HCRwd.info'))[1,1])
     rea<-reactiveValues()
@@ -53,6 +75,12 @@ prjSettings_Server <- function(input, output, session){
     output$pathViewer<-shiny::renderDataTable({
             folderFrame(paste0(workingDir, "Projects/"))
     })
+
+    prjManExport<-reactiveValues()
+
+
+
+    #=====================================================
 
     shiny::observeEvent(input$loadNewPrj,{
         if (input$loadNewPrj == "load"){
@@ -240,12 +268,12 @@ prjSettings_Server <- function(input, output, session){
             folderFrame(paste0(workingDir, "Projects/"))
         })
         output$anSetted<-shiny::renderUI({})
-    })
+    }) #fine reset button
 
     shiny::observeEvent(input$loadNewAn,{
         if(input$loadNewAn == "new"){
             output$anNames<-shiny::renderUI({
-                shiny::textInput(nspace("anNewNames"), label=h5("Analysis"))
+                shiny::textInput(nspace("anNewName"), label=h5("Analysis"))
             })
 
             output$anExecuteBut<-shiny::renderUI({
@@ -261,8 +289,8 @@ prjSettings_Server <- function(input, output, session){
                                 shiny::selectInput(nspace("inputType"),
                                                     label = h5(""),
                                                     choices = c("BAM",
-                                                                "Matrix",
-                                                                "Multi")
+                                                                "Matrix")
+                                                                #,"Multi")
                                 )
                     )
 
@@ -283,9 +311,17 @@ prjSettings_Server <- function(input, output, session){
                                             shiny::helpText("Select bam file:")
                                             ),
                                         shiny::column(8,
-                                            shiny::fileInput(nspace("bamFile"),
-                                                            label=h5("")
-                                                            )
+                                            selectFile(nspace("bamFile"),
+                                                    label=h5(""),
+                                                    path=paste0(
+                                                    prjManExport$prjFolder,
+                                                    "/ProjectData/Hi-C/"),
+                                                subset=TRUE,
+                                                pattern=".bam"
+                                            )
+                                            # shiny::fileInput(nspace("bamFile"),
+                                            #                 label=h5("")
+                                            #                 )
                                                     )
                                     ),
                                     shiny::fluidRow(
@@ -333,7 +369,7 @@ prjSettings_Server <- function(input, output, session){
                                                   #)
                                             )
 
-                ))
+                ))#input BAM panel
             })
 
 #             output$anOptionsSlot<-shiny::renderUI({
@@ -377,9 +413,17 @@ prjSettings_Server <- function(input, output, session){
                                 shiny::helpText("Select bam file:")
                                     ),
                                 shiny::column(8,
-                                shiny::fileInput(nspace("bamFile"),
-                                                label=h5("")
-                                                )
+                                            selectFile(nspace("bamFile"),
+                                                        path=paste0(
+                                                            prjManExport$prjFolder,
+                                                            "/ProjectData/Hi-C/"),
+                                                        label=h5(""),
+                                                        subset=TRUE,
+                                                        pattern=".bam"
+                                            )
+                    # shiny::fileInput(nspace("bamFile"),
+                    #                                         label=h5("")
+                    #                             )
                                     )
                             ),
                     shiny::fluidRow(
@@ -431,7 +475,7 @@ prjSettings_Server <- function(input, output, session){
 
                 ))
             })
-
+#input$inputType == "BAM"
         } else {
             if (input$inputType == "Matrix") {
                 output$anOptionsSlot3<-shiny::renderUI({
@@ -454,9 +498,9 @@ prjSettings_Server <- function(input, output, session){
                                         ),
                                     shiny::column(5,
                                         shiny::selectInput(nspace("maType"),
-                                                            label="",
-                                                            choices=c("sparse",
-                                                                    "dense"
+                                                        label="",
+                                                        choices=c("simmetric",
+                                                                    "reduced"
                                                                     )
                                                         )
                                           ),
@@ -488,6 +532,55 @@ prjSettings_Server <- function(input, output, session){
             }
         }
     })
+    #==================================================
+    #                   observe Buttons
+    #==================================================
 
+    shiny::observeEvent(input$prjButton,{
+            if (input$loadNewPrj == "new"){
+                makeHCRprj(input$prjNewName, paste0(workingDir,"Projects/"))
+                prjManExport$prjFolder <- paste0(workingDir,"Projects/",
+                                                input$prjNewName, "/"
+                                                )
+                print(prjManExport$prjFolder)
+            } else { #input$loadNewPrj == "load"
+                prjManExport$prjFolder <- paste0(workingDir,"Projects/",
+                                                input$prjLoadName, "/"
+                                                )
+                print(prjManExport$prjFolder)
+            }
+    })
+
+    shiny::observeEvent(input$newAnalysis,{
+
+        if (input$loadNewPrj=="new"){
+            prjName<-input$prjNewName
+        } else {#input$loadNewPrj=="load"
+            prjName<-input$prjLoadName
+        }
+
+        if (input$inputType == "BAM"){
+                it<-matrix(ncol=2, nrow=5)
+                it[,1]<-c("InputName", "Resolution", "Type",
+                        "AnalysisName", "ProjectName")
+
+                inBamTT<<-input$bamFile$name
+                inbinTT<<-input$binSize
+                inTyYY<<-input$inputType
+                prjNaTT<<-prjName
+                inanNaTT<<-input$anNewName
+
+                it[,2]<-c(input$bamFile$name, input$binSize, input$inputType,
+                        prjName, input$anNewName)
+
+                makeHCRan(input$anNewName, prjManExport$prjFolder, infoTable=it)
+        } else {
+
+            if (input$inputType == "Matrix"){
+
+            }
+
+        }
+    })
 
 }

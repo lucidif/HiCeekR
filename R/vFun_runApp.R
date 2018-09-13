@@ -10,10 +10,36 @@
 #'
 #'
 #' @export
-HiCeekR=function (){
-    #shiny::runApp(appDir="R/")
+HiCeekR<-function (configFilePath="./HCR.config"){
+    ####shiny::runApp(appDir="R/")
+    # if (file.exists(configFilePath)==TRUE){
+    # workingDir<-as.character((read.table(configFilePath))[1,1])
+    # ####confTable<-matrix(ncol=1,nrow=2)
+    # ####confTable[1,1]<-workingDir
+    # #####confTable[2,1]<-projectName
+    # write.table(workingDir,"HCRtmp.config", col.names=FALSE, row.names=FALSE,
+    #             quote=FALSE, sep="\t")
+    # }
     shiny::shinyApp(server=server, ui=ui)
+    #options = list(display.mode = 'showcase')
 }
+
+
+#' HCRprjManager
+#'
+#' @param configFilePath
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
+HCRprjManager<-function(configFilePath="./HCR.config"){
+    workingDir<-as.character((read.table(configFilePath))[1,1])
+    shiny::shinyApp(server=prjMan_server(HCRwdDir=workingDir), ui=prjMan_UI)
+
+}
+
+
 
 
 

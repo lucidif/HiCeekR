@@ -5,7 +5,7 @@
 #' @param path path from which to obtain the data frame
 #'
 #' @return
-#' @export
+#' @keywords internal
 #'
 #' @examples
 folderFrame<-function(path){

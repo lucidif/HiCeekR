@@ -16,7 +16,7 @@
 testInfoTable<-function(infoTable, stop=TRUE){
 
     if(length(infoTable[1,])==2){
-        if(length(infoTable[,1])==5){
+        if(length(infoTable[,1])==6){
             return(infoTable)
         } else {
             if (stop==TRUE){

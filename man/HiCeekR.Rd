@@ -4,7 +4,7 @@
 \alias{HiCeekR}
 \title{Run HiCeekR}
 \usage{
-HiCeekR()
+HiCeekR(configFilePath = "./HCR.config")
 }
 \value{
 None

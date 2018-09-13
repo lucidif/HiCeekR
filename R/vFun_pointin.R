@@ -1,17 +1,15 @@
 
-
-# " pointin
-# "
-# "obtain path of specific folder in HiCeekR project folder
-# "
-# " @param analysisFolder Character vector with path of specific analysis folder
-# " @param specificFolderName Character vector with name of folder of interest
-# "
-# " @return Character vector with path of specific folder of interest
-# " @export
-# "
-# " @examples
-pointin<- function(analysisFolder, specificFolderName ){
+#' pointin
+#'
+#' @param analysisFolder Character vector with path of specific analysis folder
+#' @param specificFolderName Character vector with name of folder of interest
+#' @param sys bulean fro choicing if save in Results folder or in SysOut folder
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
+pointin<- function(analysisFolder, specificFolderName , sys=FALSE){
 
     exSw<-FALSE
 
@@ -28,6 +26,12 @@ pointin<- function(analysisFolder, specificFolderName ){
     spacewd<- sub(as.character(toremoveAll),"",analysisFolder, fixed=TRUE)
     #print(c( "spacewd ",spacewd))
 
+    if (sys==TRUE){
+        beforePath<-"SysOut/"
+    }else{#sys==FALSE
+        beforePath<-"Results/"
+    }
+
     #=========================================================================
     if(specificFolderName == "Projects"){
         poi<-paste0(spacewd, "Projects/")
@@ -35,7 +39,7 @@ pointin<- function(analysisFolder, specificFolderName ){
     }
 
     if(specificFolderName ==  "Annotation"){
-        poi<-paste0(spacewd, "Annotation/")
+        poi<-paste0(spacewd, "Annotations/")
         exSw<-TRUE
     }
 
@@ -65,71 +69,117 @@ pointin<- function(analysisFolder, specificFolderName ){
 
     #==========================================================================
 
-    if(specificFolderName == "Pre-Processing"){
-        poi<- paste0(zl,projectName, "/", analysisName,
-                    "Results/Pre-Processing/")
+    if (specificFolderName == "Pre-Processing" |
+        specificFolderName == "Binning" |
+        specificFolderName == "Filtering"|
+        specificFolderName == "Normalization" |
+        specificFolderName == "Downstream" |
+        specificFolderName == "Visualization" |
+        specificFolderName == "Report"
+    ) {
+
+        poi<- paste0(zl,projectName, "/", analysisName, "/",
+                     beforePath , specificFolderName, "/")
+
         exSw<-TRUE
     }
 
-    if(specificFolderName == "SysPre-Processing"){
-        poi<- paste0(zl,projectName, "/", analysisName,
-                     "SysOut/Pre-Processing/")
+    if (specificFolderName == "PCA"){
+        mafoDown<-"Downstream/"
+        poi<-paste0(zl, projectName, "/", analysisName, "/",
+                    beforePath, mafoDown, specificFolderName,"/"
+        )
+        exSw<-TRUE
+
+    }
+
+    if (specificFolderName == "Networks"){
+        mafo<-"Report/"
+        poi<-paste0(zl, projectName, "/", analysisName, "/",
+                    beforePath, mafo, specificFolderName,"/"
+        )
         exSw<-TRUE
     }
 
-    if(specificFolderName == "Binning"){
-        poi<- paste0(zl,projectName, "/", analysisName,
-                     "Results/Binning/")
-        exSw<-TRUE
+
+    #deprecated specificFolderName
+    if (specificFolderName == "netReports"){
+
+            ##netReports is deprecated, now point in Networks
+            poi<- paste0(zl,projectName, "/", analysisName, "/",
+                         beforePath, "Reports/Networks/")
+            exSw<-TRUE
+
+
     }
 
-    if(specificFolderName == "SysBinning"){
-        poi<- paste0(zl,projectName, "/", analysisName,
-                     "SysOut/Binning/")
-        exSw<-TRUE
-    }
-
-    if(specificFolderName == "Normalization"){
-        poi<- paste0(zl,projectName, "/", analysisName,
-                     "Results/Normalization/")
-        exSw<-TRUE
-    }
-
-    if(specificFolderName == "SysNormalization"){
-        poi<- paste0(zl,projectName, "/", analysisName,
-                     "SysOut/Normalization/")
-        exSw<-TRUE
-    }
-
+    #deprecated specifiFolderName
     if(specificFolderName == "Plots"){
         ##plots is deprecated, now point in Reports
         poi<- paste0(zl,projectName, "/", analysisName,  "/Reports/")
         exSw<-TRUE
     }
 
-    if(specificFolderName ==  "Reports"){
-        ##plots is deprecated, now point in Reports
-        poi<- paste0(zl,projectName, "/", analysisName,  "/Reports/")
-        exSw<-TRUE
-    }
+    # if(specificFolderName == "PCA"){
+    #     poi<- paste0(zl,projectName, "/", analysisName,
+    #                 "/Post-Processing/PCA/")
+    #     exSw<-TRUE
+    # }
 
-    if(specificFolderName == "netReports"){
-        ##netReports is deprecated, now point in Networks
-        poi<- paste0(zl,projectName, "/", analysisName, "/Reports/Networks/")
-        exSw<-TRUE
-    }
 
-    if(specificFolderName == "Post-Processing"){
-        poi<- paste0(zl,projectName, "/", analysisName,  "/Post-Processing/")
-        exSw<-TRUE
-    }
-
-    if(specificFolderName == "PCA"){
-        poi<- paste0(zl,projectName, "/", analysisName,
-                    "/Post-Processing/PCA/")
-        exSw<-TRUE
-    }
-
+    # if(specificFolderName == "Pre-Processing"){
+    #     poi<- paste0(zl,projectName, "/", analysisName,
+    #                 beforePath ,"Pre-Processing/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName == "Binning"){
+    #     poi<- paste0(zl,projectName, "/", analysisName,
+    #                 beforePath ,"Binning/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName == "Normalization"){
+    #     poi<- paste0(zl,projectName, "/", analysisName,
+    #                  "Results/Normalization/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName == "SysNormalization"){
+    #     poi<- paste0(zl,projectName, "/", analysisName,
+    #                  "SysOut/Normalization/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName == "Plots"){
+    #     ##plots is deprecated, now point in Reports
+    #     poi<- paste0(zl,projectName, "/", analysisName,  "/Reports/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName ==  "Reports"){
+    #     ##plots is deprecated, now point in Reports
+    #     poi<- paste0(zl,projectName, "/", analysisName,  "/Reports/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName == "netReports"){
+    #     ##netReports is deprecated, now point in Networks
+    #     poi<- paste0(zl,projectName, "/", analysisName, "/Reports/Networks/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName == "Post-Processing"){
+    #     poi<- paste0(zl,projectName, "/", analysisName,  "/Post-Processing/")
+    #     exSw<-TRUE
+    # }
+    #
+    # if(specificFolderName == "PCA"){
+    #     poi<- paste0(zl,projectName, "/", analysisName,
+    #                 "/Post-Processing/PCA/")
+    #     exSw<-TRUE
+    # }
+    #
     if (exSw == FALSE){
         warning("pointin function did not find folder; path set in
                 'SysOut folder'")

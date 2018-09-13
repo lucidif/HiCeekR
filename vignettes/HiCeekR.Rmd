@@ -1,0 +1,27 @@
+---
+title: "HiCeekR vignettes"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+first step load HiCeekR package
+
+```{r include = TRUE}
+    #library(HiCeekR)
+    devtools::load_all()
+```
+
+second step create HiCeekR working directory
+
+```{r include = TRUE}
+    makeHCRwd()
+```
+
+you can change wd Folder with setHCRwd command
+
+```{r include = TRUE}
+    dir.create("test")
+    setHCRwd("/test/")
+```
+

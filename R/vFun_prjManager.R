@@ -1,11 +1,32 @@
 
+#' makeConfig
+#'
+#' make HiCeekR config file
+#'
+#' @param path character vector that contain folder path
+#'
+#' @return HCRwd.info file that contain the path of HiCeekR woorking directory
+#'
+#' @keywords internal
+#'
+#'
+#' @export
+#'
+makeConfig=function(path=paste0(getwd(),"/")){
+    write.table(path, "HCR.config", col.names=FALSE, row.names=FALSE,
+                quote=FALSE, sep="\t")
+    #print(paste0("working path:",path, ".....setted"))
+}
+
+
+
 #' setHCRwd
 #'
 #' set folder in which HiCeekR works
 #'
 #' @param path character vector that contain folder path
 #'
-#' @return None
+#' @return HCRwd.info file that contain the path of HiCeekR woorking directory
 #'
 #' @example
 #'
@@ -15,6 +36,7 @@
 setHCRwd=function(path){
     write.table(path,"HCRwd.info", col.names=FALSE, row.names=FALSE,
                 quote=FALSE, sep="\t")
+    print(paste0("HCRwd path:",path, ".....setted"))
 }
 
 
@@ -30,11 +52,12 @@ setHCRwd=function(path){
 #'
 #'
 #' @export
-makeHCRwd=function(path){
-    mainFolder=paste0(path,"HiCeekRwd/")
+makeHCRwd<-function(path = getwd()){
+    mainFolder<-paste0(path,"HiCeekRwd/")
+    setHCRwd(mainFolder)
     SubFolder_lv1<-c('Projects','RefGenomes','Annotations')
     dir.create (mainFolder, showWarnings=TRUE, recursive=FALSE)
-    len=length(SubFolder_lv1)
+    len<-length(SubFolder_lv1)
     for (ls in 1:len){
         secondSub<-paste0 (mainFolder, SubFolder_lv1[ls], '/')
 
@@ -73,6 +96,7 @@ makeHCRprj=function (name, path){
 
     zeroLevel<-'ProjectData'
     ProjectData_SubFolder_lv1<-c('Hi-C','Epi','Other')
+    ProjectData_HiCsubFolder_lv2<-c("bam", "matrix")
     #,'Genomes')
 
     ##when you add new folder in project_folder folder add it to zeroLevel array
@@ -107,18 +131,42 @@ makeHCRprj=function (name, path){
     }
     ##===============================================
 
+    ##for folders in Hi-C
+    # for (ls in 1:length(ProjectData_HiCsubFolder_lv2)){
+    #     print(paste0(mainFolder, "ProjectData/Hi-C",
+    #            ProjectData_HiCsubFolder_lv2[ls], "/"
+    #     ))
+    #     thirdSud<-paste0(mainFolder, "ProjectData/Hi-C/",
+    #                     ProjectData_HiCsubFolder_lv2[ls], "/"
+    #                     )
+    #
+    #     dir.create (thirdSub, showWarnings=TRUE, recursive=FALSE)
+    #
+    # }
+
+
     #=============================================================
 
 }
 
 
+#' makeHCRan
+#'
+#' @param name character varible that contain the name of analysis
+#' @param prjPath  character variable that contain the path of projects that
+#' @param infoTable table that contai analysis information
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
 makeHCRan<-function(name, prjPath, infoTable){
     mainFolder<-paste0(prjPath,name,"/")
     dir.create(mainFolder,showWarnings=TRUE, recursive=FALSE)
 
     lv1<-c("SysOut", "Results")
-    lv2<-c("Pre-Processing", "Binning", "Normalization", "Downstream",
-            "Visualization", "Report")
+    lv2<-c("Pre-Processing", "Filtering", "Binning", "Normalization",
+            "Downstream", "Visualization", "Report")
 
     #dir creation
     for(i in 1:length(lv1)){

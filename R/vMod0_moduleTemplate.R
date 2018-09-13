@@ -1,3 +1,12 @@
+#' moduleTemplate_UI
+#'
+#' @param id
+#' @param label
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
 moduleTemplate_UI <- function(id, label="moduleTemplate"){
     ns <- shiny::NS(id)
 
@@ -36,6 +45,16 @@ moduleTemplate_UI <- function(id, label="moduleTemplate"){
 }
 
 
+#' moduleTemplate_Server
+#'
+#' @param input
+#' @param output
+#' @param session
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
 moduleTemplate_Server <- function(input, output, session){
     nspace<-session$ns
 }
