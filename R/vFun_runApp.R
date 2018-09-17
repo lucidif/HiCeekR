@@ -11,6 +11,7 @@
 #'
 #' @export
 HiCeekR<-function (configFilePath="./HCR.config"){
+
     ####shiny::runApp(appDir="R/")
     # if (file.exists(configFilePath)==TRUE){
     # workingDir<-as.character((read.table(configFilePath))[1,1])

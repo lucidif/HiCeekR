@@ -8,3 +8,10 @@ if (file.exists(configFilePath)==TRUE){
     write.table(workingDir,"HCRtmp.config", col.names=FALSE, row.names=FALSE,
                 quote=FALSE, sep="\t")
 }
+
+#restart<-TRUE
+
+#import SysVal===============================
+
+#============================================
+

@@ -16,9 +16,48 @@ shiny::addResourcePath("www", "./www")
 
 #======mainStataments==========================================================
 server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
-
+    #print (session$ns)
     shinyjs::hide(id = "loading-content", anim = TRUE, animType = "fade")
     shinyjs::show("app-content")
+
+    if (file.exists("./SysVal.Robj")==FALSE){
+        SysVal<-matrix(nrow=1,ncol=1)
+        SysVal[1,1]<-TRUE
+        rownames(SysVal)<-"restart"
+        save(SysVal,file="./SysVal.Robj")
+    }
+
+    if (file.exists("./HCR.config")==TRUE){
+        print("preWd")
+        workingDir<-as.character((read.table(configFilePath))[1,1])
+        print("postWd")
+        print("workingDir")
+        ####confTable<-matrix(ncol=1,nrow=2)
+        ####confTable[1,1]<-workingDir
+        #####confTable[2,1]<-projectName
+        write.table(workingDir,"HCRtmp.config", col.names=FALSE, row.names=FALSE,
+                    quote=FALSE, sep="\t")
+    }
+
+
+    load("./SysVal.Robj")
+
+    rea<-shiny::reactiveValues()
+
+    rea$volumes<-c(root = "/")
+    rea$rStart<-as.logical(SysVal["restart",1])
+
+    print (isolate(rea$rStart))
+
+    if (isolate(rea$rStart==TRUE)){
+        SysVal["restart",1]<-"FALSE"
+        save(SysVal,file="./SysVal.Robj")
+        session$reload()
+
+     }
+    restart<-FALSE
+
+
 
     shiny::onStop(function(){
         if (file.exists(paste0(getwd(),"/www/fragments.jpeg"))==TRUE){
@@ -39,20 +78,6 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
 
 
     })
-
-    if (file.exists("./HCR.config")==TRUE){
-        workingDir<-as.character((read.table(configFilePath))[1,1])
-        ####confTable<-matrix(ncol=1,nrow=2)
-        ####confTable[1,1]<-workingDir
-        #####confTable[2,1]<-projectName
-        write.table(workingDir,"HCRtmp.config", col.names=FALSE, row.names=FALSE,
-                    quote=FALSE, sep="\t")
-    }
-
-
-    rea<-shiny::reactiveValues()
-    rea$volumes<-c(root = "")
-
 
     prjManExport<-shiny::reactiveValues()
 
@@ -84,9 +109,9 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
     })
 
 
-    observeEvent(input$wdPath,{
+    shiny::observeEvent(input$wdPath,{
 
-        output$wdPathText<-renderText({
+        output$wdPathText<-shiny::renderText({
             paste0(
                     "path selected: ",
                     shinyDirPath(input$wdPath)
@@ -94,25 +119,31 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
             })
     })
 
-    observeEvent(input$configPath,{
-        output$configPathText<-renderText({
+    shiny::observeEvent(input$configPath,{
+        output$configPathText<-shiny::renderText({
+            if (is.list(input$configPath$files)==FALSE){
             paste0(
                 "file selected: ",
-                shinyFilesPath(input$configPath)
-                   )
+                shinyFilesPath(unlist(input$configPath$files))
+                #shinyFilesPath(unlist(input$configPath))
+                   )}
         })
     })
 
-    observeEvent(input$bamFile,{
-        output$bamPathShow<-renderText({
-            paste0("file selected:",shinyFilesPath(input$bamFile))
+    shiny::observeEvent(input$bamFile,{
+        output$bamPathShow<-shiny::renderText({
+            if (is.atomic(input$bamFile)==FALSE){
+            paste0("file selected:",shinyFilesPath(unlist(input$bamFile$files)))
+            }
         })
     })
 
-    observeEvent(input$refGenome,{
-        output$textReference<-renderText({
-            paste0("file selected:",shinyFilesPath(input$refGenome,
-                                                    last=TRUE))
+    shiny::observeEvent(input$refGenome,{
+        output$textReference<-shiny::renderText({
+            if (is.atomic(input$refGenome)==FALSE){
+                paste0("file selected:",shinyFilesPath(unlist(input$refGenome$files)))
+            }
+
         })
     })
 
@@ -123,8 +154,9 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
 
 
 if (file.exists("HCRtmp.config")==TRUE){
-    print("temp exist")
-    output$configFileText<-renderText({""})
+    #print("temp exist")
+    #print(getwd())
+    output$configFileText<-shiny::renderText({""})
     #workingDir<-as.character((read.table('HCRtmp.config'))[1,1])
     rea$workingDir<-as.character(paste0((read.table('HCRtmp.config'))[1,1],"HiCeekRwd/"))
     #prjName<-as.character((read.table('HCRtmp.config'))[2,1])
@@ -150,7 +182,7 @@ if (file.exists("HCRtmp.config")==TRUE){
 } else {
 
     rea$config<-"none"
-    output$configFileText<-renderText({"no config file found, please make a config file with panel below"})
+    output$configFileText<-shiny::renderText({"no config file found, please make a config file with panel below"})
     #print(isolate(rea$config))
 
 }
@@ -159,11 +191,11 @@ if (file.exists("HCRtmp.config")==TRUE){
 shiny::observeEvent(input$loadOrNewConf, {
 
     if (input$loadOrNewConf=="new"){
-        output$configHelper<-renderText({
+        output$configHelper<-shiny::renderText({
             paste0("create new config file in: ",getwd())
         })
     } else {#input$loadOrNewConf=="load"
-        output$configHelper<-renderText({
+        output$configHelper<-shiny::renderText({
             "select existent HCR.config"
         })
         }
@@ -196,7 +228,7 @@ shiny::observeEvent(input$resetBut,{
 
 
 
-output$prjState<-renderText({
+output$prjState<-shiny::renderText({
     "Select Project"
 })
 
@@ -273,9 +305,10 @@ shiny::observeEvent(input$makeConfig,{
 
 shiny::observeEvent(input$loadConfig,{
     busyIndServer("loadConfig",{
-        file.copy(from=shinyFilesPath(input$configPath),to=paste0(getwd(),"/HCR.config"))
-
-        output$configFileText<-renderText({""})
+        #file.copy(from=shinyFilesPath(input$configPath),to=paste0(getwd(),"/HCR.config"))
+        file.copy(from=shinyFilesPath(unlist(input$configPath$files)),to=paste0(getwd(),"/HCR.config"))
+        #unlist(input$configPath$files)
+        output$configFileText<-shiny::renderText({""})
         #workingDir<-as.character((read.table('HCRtmp.config'))[1,1])
         rea$workingDir<-as.character(paste0((read.table('HCR.config'))[1,1],"HiCeekRwd/"))
         prjName<-as.character((read.table('HCR.config'))[2,1])
@@ -293,7 +326,7 @@ shiny::observeEvent(input$loadConfig,{
 shiny::observeEvent(input$resetPrj,{
 
 
-    output$prjState<-renderText({
+    output$prjState<-shiny::renderText({
         "Select Project"
     })
 
@@ -316,7 +349,7 @@ shiny::observeEvent(input$prjButton,{
 
     refGenomeDir<-paste0(isolate(rea$workingDir), "RefGenomes/")
     print(paste0("referenceGenomes:", refGenomeDir))
-    output$refgenSlot <- renderUI({
+    output$refgenSlot <- shiny::renderUI({
         selectFile(
             id="refGenome",
             path = refGenomeDir,
@@ -351,7 +384,7 @@ shiny::observeEvent(input$prjButton,{
             print(prjManExport$prjFolder)
         }
 
-        output$prjState<-renderText({
+        output$prjState<-shiny::renderText({
             "Project Selected"
         })
 
@@ -398,10 +431,11 @@ shiny::observeEvent(input$newAnalysis,{
             #print(shinyFilesPath(input$bamFile))
             #print(shinyFilesPath(input$refGenome))
             #print(shinyFilesPath(input$refGenome, last=TRUE))
-            itValues<-c(shinyFilesPath(input$bamFile) , input$binSize,
+            #print(unlist(input$bamFile$files))
+            itValues<-c(shinyFilesPath(unlist(input$bamFile$files)) , input$binSize,
                         input$inputType, prjName, input$anNewName,
                         paste0("Reference Genome:",
-                               shinyFilesPath(input$refGenome, last=TRUE)
+                               shinyFilesPath(unlist(input$refGenome$files, last=TRUE))
                                )
                         )
             #itValuesTT<<-itValues
@@ -423,8 +457,8 @@ shiny::observeEvent(input$newAnalysis,{
 #============================================================================
 
             print("before Param")
-
-            param<-refGenomeEdit(refGenome = shinyFilesPath(input$refGenome),
+            print(unlist(input$refGenome$files))
+            param<-refGenomeEdit(refGenome = shinyFilesPath(unlist(input$refGenome$files)),
                                 enzyme = input$cutSite,
                                 overhang = input$overhang,
                                 name = "refGenFrag",
@@ -436,7 +470,7 @@ shiny::observeEvent(input$newAnalysis,{
             print("param obtained")
 
             reportTable<-bamMatching(
-                bam.datapath=shinyFilesPath(input$bamFile),
+                bam.datapath=shinyFilesPath(unlist(input$bamFile$files)),
                 param=param,
                 h5PathOut=pointin(rea$anDir,
                                   "Pre-Processing",
@@ -476,11 +510,11 @@ shiny::observeEvent(input$newAnalysis,{
 
             #=================================================================
 
-            output$navSlot<-renderUI({
+            output$navSlot<-shiny::renderUI({
                 mainNav(inType="BAM")
             })
 
-            output$prjState<-renderText({
+            output$prjState<-shiny::renderText({
                 "Analysis Selected"
             })
 
@@ -555,11 +589,11 @@ shiny::observeEvent(input$anButtonLoad,{
 
     #==========================================================================
 
-    output$navSlot<-renderUI({
+    output$navSlot<-shiny::renderUI({
         mainNav(inType="BAM")
     })
 
-    output$prjState<-renderText({
+    output$prjState<-shiny::renderText({
         "Analysis Selected"
     })
 
@@ -832,8 +866,8 @@ shiny::observeEvent(input$Networks_start,{
     shiny::observeEvent (input$mainNav,{
 
         if (input$mainNav == 'Summary' & file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
-            output$moduleScreen<-renderUI({})
-            output$selectPn<-renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
             tool_DetectInteraction<-"sum"
             moduleUI_DetectInteraction<- "sum_UI"
             moduleLoad_DetectInteraction<- "sum_Server"
@@ -853,8 +887,8 @@ shiny::observeEvent(input$Networks_start,{
         if (input$mainNav == 'Filtering' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
             print("Filtering tab")
-            output$selectPn<-renderUI({})
-            output$moduleScreen<-renderUI({})
+            output$selectPn<-shiny::renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
             # if (exists("rea$moduleSet")==TRUE){
             #     print(paste0("moduleSet:",rea$moduleSet))
             # }else{
@@ -864,7 +898,7 @@ shiny::observeEvent(input$Networks_start,{
             #output$moduleScreen<-renderUI({})
 
             #output$filteringSlot<-renderUI({moduleStartPanel("Filtering",
-            output$selectPn<-renderUI({moduleStartPanel("Filtering",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("Filtering",
                                                     rea$anDir,
                                                     callModuleDescription(
                                                         "Filtering")
@@ -875,8 +909,8 @@ shiny::observeEvent(input$Networks_start,{
         if (input$mainNav == 'Binning' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
             print("Binning tab")
-            output$selectPn<-renderUI({})
-            output$moduleScreen<-renderUI({})
+            output$selectPn<-shiny::renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
             # if (exists("rea$moduleSet")==TRUE){
             #     print(paste0("moduleSet:",rea$moduleSet))
             # }else{
@@ -896,10 +930,10 @@ shiny::observeEvent(input$Networks_start,{
         if (input$mainNav == 'iterative' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
             #print("Filtering tab")
-            output$selectPn<-renderUI({})
-            output$moduleScreen<-renderUI({})
+            output$selectPn<-shiny::renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
             #output$iterativeSlot<-renderUI({moduleStartPanel("iterative",
-            output$selectPn<-renderUI({moduleStartPanel("iterative",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("iterative",
                                                         rea$anDir,
                                                         callModuleDescription(
                                                         "iterative")
@@ -909,10 +943,10 @@ shiny::observeEvent(input$Networks_start,{
 
         if (input$mainNav == 'WavSis' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
-            output$moduleScreen<-renderUI({})
-            output$selectPn<-renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
             #output$WavSisSlot<-renderUI({moduleStartPanel("WavSis",
-            output$selectPn<-renderUI({moduleStartPanel("WavSis",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("WavSis",
                                                              rea$anDir,
                                                              callModuleDescription(
                                                                  "WavSis")
@@ -922,10 +956,10 @@ shiny::observeEvent(input$Networks_start,{
 
         if (input$mainNav == 'TADsHMM' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
-            output$moduleScreen<-renderUI({})
-            output$selectPn<-renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
             #output$hmmSlot<-renderUI({moduleStartPanel("TADsHMM",
-            output$selectPn<-renderUI({moduleStartPanel("TADsHMM",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("TADsHMM",
                                                         rea$anDir,
                                                         callModuleDescription(
                                                             "TADsHMM")
@@ -935,8 +969,8 @@ shiny::observeEvent(input$Networks_start,{
 
         if (input$mainNav == 'CompartmentsPCA' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
-            output$moduleScreen<-renderUI({})
-            output$selectPn<-renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
             #output$pcaCompSlot<-shiny::renderUI({moduleStartPanel("CompartmentsPCA",
             output$selectPn<-shiny::renderUI({moduleStartPanel("CompartmentsPCA",
                                                         rea$anDir,
@@ -948,8 +982,8 @@ shiny::observeEvent(input$Networks_start,{
 
         if (input$mainNav == 'EpigeneticFeatures' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
-            output$moduleScreen<-renderUI({})
-            output$selectPn<-renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
             #output$pcaSlot<-shiny::renderUI({moduleStartPanel("EpigeneticFeatures",
             output$selectPn<-shiny::renderUI({moduleStartPanel("EpigeneticFeatures",
                                                                 rea$anDir,
@@ -962,8 +996,8 @@ shiny::observeEvent(input$Networks_start,{
         if (input$mainNav== 'Heatmap' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
 
-            output$moduleScreen<-renderUI({})
-            output$selectPn<-renderUI({})
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
             #output$pcaSlot<-shiny::renderUI({moduleStartPanel("EpigeneticFeatures",
             output$selectPn<-shiny::renderUI({moduleStartPanel("Heatmaps",
                                                            rea$anDir,
@@ -1086,7 +1120,7 @@ shiny::observeEvent(input$Networks_start,{
                     output$selectPn <-renderUI ({
                         get(moduleUI_Binning) (tool_Binning,label='helpingUI')
                     })
-                    loadApp_Binning <-callModule(get(moduleLoad_Binning), tool_Binning,
+                    loadApp_Binning <-shiny::callModule(get(moduleLoad_Binning), tool_Binning,
                                                  stringsAsFactors = FALSE,
                                                  wdPath = rea$anDir
                     )
@@ -1100,10 +1134,10 @@ shiny::observeEvent(input$Networks_start,{
                     moduleUI_DiffHiC_Norm<- paste0 (tool_DiffHiC_Norm, '_UI')
                     moduleLoad_DiffHiC_Norm<- paste0 (tool_DiffHiC_Norm,'_Server')
                     #output$iterativeSlot<-renderUI ({
-                    output$selectPn <-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
                         get(moduleUI_DiffHiC_Norm) (tool_DiffHiC_Norm,label='iceUI')
                     })
-                    loadApp_DiffHiC_Norm <- callModule(get(moduleLoad_DiffHiC_Norm),
+                    loadApp_DiffHiC_Norm <- shiny::callModule(get(moduleLoad_DiffHiC_Norm),
                                                        tool_DiffHiC_Norm,
                                                        stringsAsFactors = FALSE,
                                                        wdPath = rea$anDir
@@ -1117,7 +1151,7 @@ shiny::observeEvent(input$Networks_start,{
                     moduleUI_chromoR<- paste0 (tool_chromoR, '_UI')
                     moduleLoad_chromoR<- paste0 (tool_chromoR,'_Server')
                     #output$WavSisSlot<- shiny::renderUI ({
-                    output$selectPn <-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
                         get(moduleUI_chromoR) (tool_chromoR,label='helpingUI')
                     })
                     loadApp_chromoR <-shiny::callModule(get(moduleLoad_chromoR),
@@ -1134,10 +1168,10 @@ shiny::observeEvent(input$Networks_start,{
                     moduleUI_hmm<- paste0 (tool_hmm, '_UI')
                     moduleLoad_hmm<- paste0 (tool_hmm,'_Server')
                     #output$hmmSlot<-renderUI ({
-                    output$selectPn <-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
                         get(moduleUI_hmm) (tool_hmm,label='helpingUI')
                     })
-                    loadApp_hmm <-  callModule(get(moduleLoad_hmm), tool_hmm,
+                    loadApp_hmm <-  shiny::callModule(get(moduleLoad_hmm), tool_hmm,
                                                stringsAsFactors = FALSE,
                                                wdPath=rea$anDir
                     )
@@ -1150,7 +1184,7 @@ shiny::observeEvent(input$Networks_start,{
                     moduleUI_pcaComp<- paste0 (tool_pcaComp, '_UI')
                     moduleLoad_pcaComp<- paste0 (tool_pcaComp,'_Server')
                     #output$pcaCompSlot<- shiny::renderUI({
-                    output$selectPn <-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
                         get(moduleUI_pcaComp) (tool_pcaComp,label='pcaUI')
                     })
                     loadApp_pcaComp <-  shiny::callModule(get(moduleLoad_pcaComp),
@@ -1166,7 +1200,7 @@ shiny::observeEvent(input$Networks_start,{
                     moduleUI_pca<- paste0 (tool_pca, '_UI')
                     moduleLoad_pca<- paste0 (tool_pca,'_Server')
                     #output$pcaSlot<-shiny::renderUI ({
-                    output$selectPn <-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
                         get(moduleUI_pca) (tool_pca,label='epifUI')
                     })
                     loadApp_pca <- shiny::callModule(get(moduleLoad_pca), tool_pca,
@@ -1182,7 +1216,7 @@ shiny::observeEvent(input$Networks_start,{
                     moduleUI_htm<- paste0 (tool_htm, '_UI')
                     moduleLoad_htm<- paste0 (tool_htm,'_Server')
                     #output$pcaSlot<-shiny::renderUI ({
-                    output$selectPn <-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
                         get(moduleUI_htm) (tool_htm,label='htmUI')
                     })
                     loadApp_htm <- shiny::callModule(get(moduleLoad_htm), tool_htm,

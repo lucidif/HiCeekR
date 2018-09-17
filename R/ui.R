@@ -101,14 +101,14 @@ ui<-shiny::shinyUI (
     shiny::fluidPage (
 
         shinyjs::useShinyjs(),
-        shinyjs::inlineCSS(appCSS),
-        shiny::tags$style(appCSS_busyClick),
+        #shinyjs::inlineCSS(appCSS),
+        #shiny::tags$style(appCSS_busyClick),
 
         # Loading message
-        shiny::div(
-                id = "loading-content",
-                shiny::h2("Loading...")
-        ),
+        # shiny::div(
+        #         id = "loading-content",
+        #         shiny::h2("Loading...")
+        # ),
 
         shiny::fluidRow(
             shiny::column(12,

@@ -8,8 +8,9 @@
 #'
 #' @examples
 shinyFilesPath<-function(input, last=FALSE){
-
-    unin<-unlist(input$files)
+    unin<-input
+    #uninTT<<-unin
+    #unin<-unlist(input$files)
     for (i in 1:(length(unin)-1)){
         unin[[i]][1]<-paste0(unin[[i]][1],"/")
     }
@@ -19,8 +20,10 @@ shinyFilesPath<-function(input, last=FALSE){
     path<-paste(unin,collapse="")
 
     if(last==TRUE){
+        print(paste0("lasto:",lastro))
         return(lasto)
     } else { #last==FALSE
+        print(paste0("path:",path))
         return(path)
     }
 
