@@ -3,7 +3,7 @@
 #' @param text scrivi un testo
 #'
 #' @return testo in console
-#' @export
+#' @keywords internal
 #'
 #' @examples
 test<-function(text){

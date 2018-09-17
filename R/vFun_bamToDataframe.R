@@ -4,7 +4,7 @@
 #' @param x
 #'
 #' @return
-#' @export
+#' @keywords internal
 #'
 #' @examples
 HCRunlist <- function (x)

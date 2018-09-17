@@ -15,4 +15,7 @@ HCRwd.info file that contain the path of HiCeekR woorking directory
 \description{
 make HiCeekR config file
 }
+\examples{
+
+}
 \keyword{internal}

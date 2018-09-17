@@ -25,6 +25,7 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
         SysVal[1,1]<-TRUE
         rownames(SysVal)<-"restart"
         save(SysVal,file="./SysVal.Robj")
+        print("sysGenerate")
     }
 
     if (file.exists("./HCR.config")==TRUE){
@@ -73,7 +74,16 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
         }
 
         if (file.exists(paste0(getwd(),"/www/inOutWard_trimmed.jpeg"))==TRUE){
+            file.remove(paste0(getwd(),"/www/inOutWard_trimmed.jpeg"))
         }
+
+         # if (file.exists("./SysVal.Robj")==TRUE){
+         #     load("./SysVal.Robj")
+         #     if (SysVal["restart",1]==FALSE){
+         #         file.remove("./SysVal.Robj")
+         #         print("Sys removed")
+         #     }
+         # }
 
 
 
@@ -112,16 +122,18 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
     shiny::observeEvent(input$wdPath,{
 
         output$wdPathText<-shiny::renderText({
+
+            if (is.atomic(input$wdPath)==FALSE){
             paste0(
                     "path selected: ",
                     shinyDirPath(input$wdPath)
-            )
+            )}
             })
     })
 
     shiny::observeEvent(input$configPath,{
         output$configPathText<-shiny::renderText({
-            if (is.list(input$configPath$files)==FALSE){
+            if (is.atomic(input$configPath)==FALSE){
             paste0(
                 "file selected: ",
                 shinyFilesPath(unlist(input$configPath$files))

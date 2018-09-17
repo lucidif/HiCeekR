@@ -15,3 +15,4 @@ testo in console
 \description{
 Test
 }
+\keyword{internal}

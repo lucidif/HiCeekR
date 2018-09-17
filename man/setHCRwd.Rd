@@ -18,3 +18,4 @@ set folder in which HiCeekR works
 \examples{
 
 }
+\keyword{internal}

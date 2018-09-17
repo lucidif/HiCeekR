@@ -10,7 +10,7 @@
 #' @keywords internal
 #'
 #'
-#' @export
+#' @examples
 #'
 makeConfig=function(path=paste0(getwd(),"/")){
     write.table(path, "HCR.config", col.names=FALSE, row.names=FALSE,
@@ -27,11 +27,9 @@ makeConfig=function(path=paste0(getwd(),"/")){
 #' @param path character vector that contain folder path
 #'
 #' @return HCRwd.info file that contain the path of HiCeekR woorking directory
+#' @keywords internal
 #'
 #' @example
-#'
-#'
-#' @export
 #'
 setHCRwd=function(path){
     write.table(path,"HCRwd.info", col.names=FALSE, row.names=FALSE,
@@ -47,11 +45,10 @@ setHCRwd=function(path){
 #' @param path character vector that contain folder path
 #'
 #' @return None
+#' @keywords internal
 #'
 #' @example
 #'
-#'
-#' @export
 makeHCRwd<-function(path = getwd()){
     mainFolder<-paste0(path,"HiCeekRwd/")
     setHCRwd(mainFolder)
@@ -77,10 +74,9 @@ makeHCRwd<-function(path = getwd()){
 #'
 #' @return None
 #'
+#' @keywords internal
 #' @example
 #'
-#'
-#' @export
 makeHCRprj=function (name, path){
 
     ##path<-where you would create a folder with variable 'name' name

@@ -12,3 +12,4 @@ HCRunlist(x)
 \description{
 HCRunlist
 }
+\keyword{internal}
