@@ -4,7 +4,8 @@
 \alias{searchTicks}
 \title{searchTicks}
 \usage{
-searchTicks(matrix, axis = "row", numberOfTicks = 14, as.path = FALSE)
+searchTicks(matrix, axis = "row", numberOfTicks = 14,
+  as.path = FALSE)
 }
 \arguments{
 \item{as.path}{}

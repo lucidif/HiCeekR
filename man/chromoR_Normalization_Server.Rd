@@ -4,7 +4,8 @@
 \alias{chromoR_Normalization_Server}
 \title{chromoR_Normalization_Server}
 \usage{
-chromoR_Normalization_Server(input, output, session, stringsAsFactors, wdPath)
+chromoR_Normalization_Server(input, output, session, stringsAsFactors,
+  wdPath)
 }
 \arguments{
 \item{wdPath}{}

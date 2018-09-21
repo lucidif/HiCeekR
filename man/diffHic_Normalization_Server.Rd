@@ -4,7 +4,8 @@
 \alias{diffHic_Normalization_Server}
 \title{diffHic_Normalization_Server}
 \usage{
-diffHic_Normalization_Server(input, output, session, stringsAsFactors, wdPath)
+diffHic_Normalization_Server(input, output, session, stringsAsFactors,
+  wdPath)
 }
 \arguments{
 \item{wdPath}{}

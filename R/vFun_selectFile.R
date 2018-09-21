@@ -30,8 +30,8 @@ selectFile<-function (id  ,path, label='Select File', subset=FALSE,
     return (
 
         selectInput(id, label = label,
-                    choices = fileList,
-                    selected = 1, width=width)
+                    choices = c("please select file",fileList),
+                    selected = "please select file", width=width)
 
 
     )

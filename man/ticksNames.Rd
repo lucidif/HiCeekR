@@ -4,8 +4,8 @@
 \alias{ticksNames}
 \title{ticksNames}
 \usage{
-ticksNames(ticks, matrix, axis = "row", as.path = FALSE, revert = FALSE,
-  simMirror = FALSE)
+ticksNames(ticks, matrix, axis = "row", as.path = FALSE,
+  revert = FALSE, simMirror = FALSE)
 }
 \arguments{
 \item{simMirror}{}

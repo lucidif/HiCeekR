@@ -4,8 +4,8 @@
 \alias{regionsInMatrix}
 \title{regionsInMatrix}
 \usage{
-regionsInMatrix(matrixPath, separate = FALSE, on = "row", unique = TRUE,
-  as.Path = TRUE)
+regionsInMatrix(matrixPath, separate = FALSE, on = "row",
+  unique = TRUE, as.Path = TRUE)
 }
 \arguments{
 \item{as.Path}{}

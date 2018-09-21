@@ -4,7 +4,8 @@
 \alias{makeBranch}
 \title{makeBranch}
 \usage{
-makeBranch(branchName, pipelineStep, configFile = "./HCR.config", infoTsv)
+makeBranch(branchName, pipelineStep, configFile = "./HCR.config",
+  infoTsv)
 }
 \arguments{
 \item{infoTsv}{}

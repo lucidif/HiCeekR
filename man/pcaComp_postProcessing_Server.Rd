@@ -4,7 +4,8 @@
 \alias{pcaComp_postProcessing_Server}
 \title{pcaComp_postProcessing_Server}
 \usage{
-pcaComp_postProcessing_Server(input, output, session, stringsAsFactors, wdPath)
+pcaComp_postProcessing_Server(input, output, session, stringsAsFactors,
+  wdPath)
 }
 \arguments{
 \item{wdPath}{}

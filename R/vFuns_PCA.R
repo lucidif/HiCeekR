@@ -46,6 +46,18 @@ pcaMatrixModel<- function (binTablePath, columnNumber=1){
 }
 
 
+#' bamPCA
+#'
+#' @param binTablePath
+#' @param bamPath
+#' @param pcaMatrixModelOut
+#' @param columnName
+#' @param add
+#'
+#' @return
+#' @keywords internal
+#'
+#' @examples
 bamPca <- function (binTablePath, bamPath, pcaMatrixModelOut ,
                     columnName , add=FALSE){
     ## se add=FALSE i valori vengono inseriti nell'ultima colonna

@@ -155,6 +155,24 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
     })
 
 
+    shiny::observeEvent(input$bedLoadPath,{
+        print("bedLoadPath")
+        print (input$bedLoadPath)
+        if ( input$bedLoadPath!="please select file"){
+            Reac$bedTab<-read.table(paste0(pointin(wdPath,'Epi'),input$bedLoadPath), sep="\t")
+            rownames(Reac$bedTab)<-rep(paste0(Reac$bedTab[,1],":",Reac$bedTab[,2],"-",Reac$bedTab[,3]))
+            Reac$bedTab<-Reac$bedTab[,-c(1:4)]
+            output$colSelectorSlot<-shiny::renderUI({
+                shiny::selectInput(pcaNServer('colSelector'),
+                            label="select column",
+                            choices=c(1:length(Reac$bedTab[1,]))
+                                )
+            })
+            #bedTabTT<<-bedTab
+        }
+
+    })
+
     shiny::observeEvent (input$genPcaMod,{
         print ('generate start')
         #plusval<- plusval+1
@@ -164,26 +182,26 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
         if (input$dataType=='bint.tsv'){
             bintabPath<- paste0 ( pointin(wdPath,'Binning'), input$binTable)
-            pcaMod<-pcaMatrixModel(bintabPath)
+            Reac$pcaMod<-pcaMatrixModel(bintabPath)
 
         }
 
         if (input$dataType=='epiCounts'){
             print ('in epiCounts')
             bintabPath<- paste0 ( pointin(wdPath,'PCA'), input$epicTable)
-            pcaMod<-HCRread('',path=bintabPath)
-            regionsN<- rownames (pcaMod)
+            Reac$pcaMod<-HCRread('',path=bintabPath)
+            regionsN<- rownames (Reac$pcaMod)
             regions<- matrix (ncol=1,nrow=length(regionsN))
-            rownames(regions)<-rownames (pcaMod)
+            rownames(regions)<-rownames (Reac$pcaMod)
             colnames(regions)<-'regions'
             regions[,1]<-regionsN
             #View (regions)
             rm (regionsN)
             #print (regions)
-            pcaMod <- cbind (regions,pcaMod)
+            Reac$pcaMod <- cbind (regions,Reac$pcaMod)
 
             #View (pcaMod)
-            print (pcaMod)
+            #print (pcaMod)
         }
 
 
@@ -198,12 +216,12 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         #colnames(pcaMod)<-'regions'
         #pcaModReduct<- pcaMod [1:10,]
         print ('pcaMod.....Generated')
-        print (c('typeof pcaMod', typeof(pcaMod)))
+        #print (c('typeof pcaMod', typeof(pcaMod)))
 
         #View (pcaMod)
 
         output$tableScreen<- shiny::renderDataTable ({
-            as.data.frame(pcaMod)
+            as.data.frame(Reac$pcaMod)
         })#, colnames=TRUE)
 
         output$secondRow<- shiny::renderUI ({
@@ -212,9 +230,19 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
                 shiny::fluidRow(
 
-                    shiny::column (8,
-                            #textInput(pcaNServer('bamLoadPath'), label='bam file path')
-                            selectFile (pcaNServer('bamLoadPath'), path=pointin (wdPath,'Epi') ,label='bam file path')
+                    shiny::column (5, shiny::br(), # esce quando selezioni bin table bin table
+                            #textInput(pcaNServer('bedLoadPath'), label='bam file path')
+                            # 3=================================================
+                            selectFile (pcaNServer('bedLoadPath'),
+                                        path=pointin (wdPath,'Epi') ,
+                                        label='bed file path',
+                                        pattern=".bed"
+                                        )
+                    ),
+
+                    shiny::column(3,
+                        shiny::uiOutput(pcaNServer("colSelectorSlot"))
+
                     ),
 
                     shiny::column (3, shiny::br(),
@@ -240,7 +268,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
         })
 
-        if (pcaMod[1,]>=2){
+        if (Reac$pcaMod[1,]>=2){
 
             output$thirdRow<- shiny::renderUI ({
 
@@ -262,11 +290,12 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
             })
 
         }
-        Reac$A_pcaMod<-pcaMod
+        Reac$A_pcaMod<-Reac$pcaMod
     })
 
-    shiny::observeEvent(input$addData,{
-        pcaMod<-Reac$A_pcaMod
+    shiny::observeEvent(input$addData,{ #============addData 2  prima volta
+        print ("addData 2")
+        Reac$pcaMod<-Reac$A_pcaMod
         print ('add pressed')
 
         output$secondRow<- shiny::renderUI({
@@ -278,32 +307,46 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         print ('please wait')
 
         if (input$dataType=='bint.tsv'){
-            pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'),
-                                       input$binTable),
-                              paste0 ( pointin(wdPath,'Epi'),
-                                       input$bamLoadPath)
-                              , pcaMod, columnName=input$name, add=input$addBox )
+            # pcaTable<-bamPca(paste0 ( pointin(wdPath,'Binning'),
+            #                            input$binTable),
+            #                   paste0 ( pointin(wdPath,'Epi'),
+            #                            input$bedLoadPath)
+            #                   , pcaMod, columnName=input$name, add=input$addBox )
+            #print (paste0(pointin(wdPath,'Epi'),input$bedLoadPath))
+            # bedLoad<-read.table(paste0 ( pointin(wdPath,'Epi'),
+            #                                 input$bedLoadPath),
+            #                     sep="\t"
+            #                     )
+            #bedLoadTT<<-bedLoad
+            merge(Reac$pcaMod, paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath))
+            #      )
+            if (input$addBox==TRUE){
+
+            } else {#input$addBox==FALSE
+
+            }
+
         }
 
         if (input$dataType=='epiCounts'){
-            pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'),
-                                       input$binTableM),
-                              paste0 ( pointin(wdPath,'Epi'),
-                                       input$bamLoadPath)
-                              , pcaMod, columnName=input$name,
-                              add=input$addBox )
+            # pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'),
+            #                            input$binTableM),
+            #                   paste0 ( pointin(wdPath,'Epi'),
+            #                            input$bedLoadPath)
+            #                   , pcaMod, columnName=input$name,
+            #                   add=input$addBox )
         }
 
 
-        # pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'), input$binTable), paste0 ( pointin(wdPath,'Epi'), input$bamLoadPath)
+        # pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'), input$binTable), paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath)
         #                    , pcaMod, columnName=input$name, add=input$addBox )
 
         print ('bamPca.....OK')
 
-        pcaMod<-pcaTable
+        Reac$pcaMod<-pcaTable
 
         output$tableScreen<- renderDataTable ({
-            as.data.frame(pcaMod)
+            as.data.frame(Reac$pcaMod)
         })
 
 
@@ -335,9 +378,19 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
                 shiny::fluidRow(
 
-                    shiny::column (8,
-                            #textInput(pcaNServer('bamLoadPath'), label='bam file path')
-                            selectFile (pcaNServer('bamLoadPath'), path=pointin (wdPath,'Epi') ,label='bam file path')
+                    shiny::column (5,
+                            #textInput(pcaNServer('bedLoadPath'), label='bam file path')
+                            # 4 =======================================
+                            selectFile (pcaNServer('bedLoadPath'),
+                                        path=pointin (wdPath,'Epi') ,
+                                        label='bad file path',
+                                        pattern=".bed"
+                                        )
+                    ),
+
+                    shiny::column(3,
+                                  shiny::uiOutput(pcaNServer("colSelectorSlot"))
+
                     ),
 
                     shiny::column (3, shiny::br(),
@@ -366,7 +419,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
 
 
-        Reac$A_pcaMod<-pcaMod
+        Reac$A_pcaMod<-Reac$pcaMod
     })
 
     shiny::observeEvent (input$export,{
@@ -380,10 +433,10 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
             if (input$normType=='RPM'){
                 # epiNorm<-pcaMod
 
-                for (i in 2:length (pcaMod[1,])) {
-                    somma<-sum (as.numeric(pcaMod[,i]))
+                for (i in 2:length (Reac$pcaMod[1,])) {
+                    somma<-sum (as.numeric(Reac$pcaMod[,i]))
                     ratio<-somma/1000000
-                    pcaMod[,i] <-  rep (as.numeric(pcaMod[,i])/ratio)
+                    Reac$pcaMod[,i] <-  rep (as.numeric(Reac$pcaMod[,i])/ratio)
 
                 }
 
@@ -392,9 +445,9 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                 if (input$normType=='byInput'){
                     print ('byInput norm start')
                     #pcaModTT2<<-pcaMod
-                    pcaMod2<-pcaMod[,-which(colnames(pcaMod) %in% input$choiceInput)] #così puoi rimuovere la colonna specifica
+                    pcaMod2<-Reac$pcaMod[,-which(colnames(pcaMod) %in% input$choiceInput)] #così puoi rimuovere la colonna specifica
                     #pcaMod2<-pcaMod[,-which(colnames(TTpcaMod) %in% 'H4K20me1')] #così puoi rimuovere la colonna specifica
-                    pcaMod3= as.matrix(pcaMod[,input$choiceInput]) #generi matrice dei soli input
+                    pcaMod3= as.matrix(Reac$pcaMod[,input$choiceInput]) #generi matrice dei soli input
                     m<-sum(as.numeric(pcaMod3))
 
                     for (i in 2:length(pcaMod2[1,])){
@@ -403,7 +456,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                         pcaMod2[,i]<- rep ( ((as.numeric(pcaMod2[,i]))*(as.numeric(m))) / ( (as.numeric(pcaMod3[,1])) * (as.numeric(n)) ) )
 
                     }
-                    pcaMod<-pcaMod2
+                    Reac$pcaMod<-pcaMod2
                 }
 
             }
@@ -411,8 +464,8 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
 
         }
-        Reac$A_pcaMod<-pcaMod
-        HCRwrite (pcaMod, nameToAssign , path=pointin(wdPath, 'PCA') ,  quote=FALSE )
+        Reac$A_pcaMod<-Reac$pcaMod
+        HCRwrite (Reac$pcaMod, nameToAssign , path=pointin(wdPath, 'PCA') ,  quote=FALSE )
         output$pcaTableSlot<- shiny::renderUI ({
             selectFile (pcaNServer('pcaTableLoaded'),
                         path=pointin(wdPath, 'PCA') ,
@@ -625,7 +678,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         } else {
 
             if (input$normType=='byInput'){
-                pcaMod<-Reac$A_pcaMod
+                Reac$pcaMod<-Reac$A_pcaMod
 
                 output$normOpt_slot<- shiny::renderUI ({
 
@@ -634,7 +687,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                         shiny::column(12,
                             shiny::selectInput(pcaNServer('choiceInput'),
                                                label='Input Column',
-                                               choices=colnames(pcaMod)[2:length(colnames(pcaMod))])
+                                               choices=colnames(Reac$pcaMod)[2:length(colnames(Reac$pcaMod))])
 
                     ))
 

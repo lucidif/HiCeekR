@@ -4,7 +4,8 @@
 \alias{hmmDI}
 \title{hmmDI}
 \usage{
-hmmDI(fileOutName, outputPath, refFragsPATH, h5PATH, bintablePath, bin.size)
+hmmDI(fileOutName, outputPath, refFragsPATH, h5PATH, bintablePath,
+  bin.size)
 }
 \arguments{
 \item{bin.size}{}

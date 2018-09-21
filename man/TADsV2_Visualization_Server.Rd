@@ -4,7 +4,8 @@
 \alias{TADsV2_Visualization_Server}
 \title{TADsV2_Visualization_Server}
 \usage{
-TADsV2_Visualization_Server(input, output, session, stringsAsFactors, wdPath)
+TADsV2_Visualization_Server(input, output, session, stringsAsFactors,
+  wdPath)
 }
 \arguments{
 \item{wdPath}{}

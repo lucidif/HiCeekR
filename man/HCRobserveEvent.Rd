@@ -6,9 +6,10 @@
 \usage{
 HCRobserveEvent(eventExpr, handlerExpr, event.env = parent.frame(),
   event.quoted = FALSE, handler.env = parent.frame(),
-  handler.quoted = FALSE, label = NULL, suspended = FALSE, priority = 0,
-  domain = getDefaultReactiveDomain(), autoDestroy = TRUE,
-  ignoreNULL = TRUE, ignoreInit = FALSE, once = FALSE)
+  handler.quoted = FALSE, label = NULL, suspended = FALSE,
+  priority = 0, domain = getDefaultReactiveDomain(),
+  autoDestroy = TRUE, ignoreNULL = TRUE, ignoreInit = FALSE,
+  once = FALSE)
 }
 \arguments{
 \item{once}{}

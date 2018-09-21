@@ -45,7 +45,9 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
 
     rea<-shiny::reactiveValues()
 
-    rea$volumes<-c(root = "/")
+    #rea$volumes<-c(root = "/")
+    #rea$volumes<-c(root = getVolumes)
+    rea$volumes<-shinyFiles::getVolumes()
     rea$rStart<-as.logical(SysVal["restart",1])
 
     print (isolate(rea$rStart))

@@ -4,10 +4,11 @@
 \alias{HCRwrite}
 \title{HCRwrite}
 \usage{
-HCRwrite(tableToWrite, file, path = "", append = FALSE, quote = FALSE,
-  sep = "\\t", eol = "\\n", na = "NA", dec = ".", row.names = FALSE,
-  col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "",
-  standard.row.names = FALSE, extension = TRUE)
+HCRwrite(tableToWrite, file, path = "", append = FALSE,
+  quote = FALSE, sep = "\\t", eol = "\\n", na = "NA", dec = ".",
+  row.names = FALSE, col.names = TRUE, qmethod = c("escape",
+  "double"), fileEncoding = "", standard.row.names = FALSE,
+  extension = TRUE)
 }
 \arguments{
 \item{extension}{}
