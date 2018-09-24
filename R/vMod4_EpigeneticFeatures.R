@@ -318,7 +318,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
             #                     sep="\t"
             #                     )
             #bedLoadTT<<-bedLoad
-            merge(Reac$pcaMod, paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath))
+            tabTT<<-merge(Reac$pcaMod, paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath))
             #      )
             if (input$addBox==TRUE){
 
@@ -367,7 +367,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                 ),
                 shiny::fluidRow(
                     shiny::column(12,
-                                  shiny::uiOutput(pcaNServer('normOpt_slot')) ))
+                                shiny::uiOutput(pcaNServer('normOpt_slot')) ))
             )
 
         })

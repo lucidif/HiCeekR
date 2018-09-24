@@ -320,6 +320,17 @@ shiny::observeEvent(input$makeConfig,{
 shiny::observeEvent(input$loadConfig,{
     busyIndServer("loadConfig",{
         #file.copy(from=shinyFilesPath(input$configPath),to=paste0(getwd(),"/HCR.config"))
+        print("config copy")
+        #print(paste0("from: ",shinyFilesPath(unlist(input$configPath$files))))
+        # print(paste0("from: ",
+        #              shinyFiles::getVolumes()()["Computer"],
+        #              shinyFiles::getVolumes()()[Sys.info()["user"]],
+        #              shinyFilesPath(unlist(input$configPath$files))))
+        # flPath<-paste0(shinyFiles::getVolumes()()["Computer"],
+        #                 shinyFiles::getVolumes()()[Sys.info()["user"]],
+        #                 shinyFilesPath(unlist(input$configPath$files)))
+
+        print(paste0("to: ", paste0(getwd(),"/HCR.config")))
         file.copy(from=shinyFilesPath(unlist(input$configPath$files)),to=paste0(getwd(),"/HCR.config"))
         #unlist(input$configPath$files)
         output$configFileText<-shiny::renderText({""})

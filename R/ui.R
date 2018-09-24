@@ -120,8 +120,8 @@ ui<-shiny::shinyUI (
             ,shiny::wellPanel(shiny::fluidRow(shiny::column(4,
                                                 shiny::selectInput("loadOrNewConf",
                                                                 label=".config",
-                                                                choices=c("load"
-                                                                        ,"new"
+                                                                choices=c("new"
+                                                                        ,"load"
                                                                         )
                                                                     )),
                                             shiny::column(8, shiny::br(),
@@ -173,7 +173,7 @@ ui<-shiny::shinyUI (
                     shiny::column(1,
                         shinyFiles::shinyFilesButton("configPath",
                                                     label="explore",
-                                                    title="select working Path",
+                                                    title="select config file",
                                                     multiple=FALSE
                                   )
 
