@@ -1,4 +1,4 @@
-options(shiny.maxRequestSize=300*1024^2)
+options(shiny.maxRequestSize=300*1024^2,stringsAsFactors = FALSE)
 shiny::addResourcePath("www", "./www")
 #R.home
 

@@ -27,7 +27,10 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
 
                             shiny::selectInput (pcaNS('dataType'),
                                                 label='data type',
-                                                choices = c('bint.tsv','epiCounts')
+                                                choices = c(#'bint.tsv',
+                                                            #'epiCounts',
+                                                            'EpiCounts.bed'
+                                                            )
                                                 )
 
                                         )
@@ -202,6 +205,25 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
             #View (pcaMod)
             #print (pcaMod)
+        }
+
+        if (input$dataType=='EpiCounts.bed'){
+            #testTT<<-mergeBed(input$epicBed$datapath)
+            #testTTnames<<-input$epicBed$name
+
+            clnm<-gsub(".bed","",input$epicBed$name)
+            Reac$pcaMod<-mergeBed(input$epicBed$datapath, customHeader=TRUE,
+                                  header=clnm
+                                  )
+            regionsN<- rownames (Reac$pcaMod)
+            regions<- matrix (ncol=1,nrow=length(regionsN))
+            rownames(regions)<-rownames (Reac$pcaMod)
+            colnames(regions)<-'regions'
+            regions[,1]<-regionsN
+            #View (regions)
+            rm (regionsN)
+            #print (regions)
+            Reac$pcaMod <- cbind (regions,Reac$pcaMod)
         }
 
 
@@ -647,13 +669,13 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
             output$selFileSlot <- shiny::renderUI ({
 
                 shiny::wellPanel (
-                    shiny::fluidRow(
-                        selectFile (pcaNServer('binTableM'),
-                                    path=pointin (wdPath, 'Binning') ,
-                                    label='select binTable file',
-                                    subset=TRUE,
-                                    pattern='.bint')
-                    ),
+                    # shiny::fluidRow(
+                    #     selectFile (pcaNServer('binTableM'),
+                    #                 path=pointin (wdPath, 'Binning') ,
+                    #                 label='select binTable file',
+                    #                 subset=TRUE,
+                    #                 pattern='.bint')
+                    # ),
                     shiny::fluidRow(
                         selectFile (pcaNServer('epicTable'),
                                     path=pointin (wdPath, 'PCA') ,
@@ -664,6 +686,32 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                 )
 
             })
+        }
+
+        if (input$dataType=="EpiCounts.bed"){
+            output$selFileSlot <- shiny::renderUI ({
+            shiny::wellPanel (
+                # shiny::fluidRow(
+                #     selectFile (pcaNServer('binTableM'),
+                #                 path=pointin (wdPath, 'Binning') ,
+                #                 label='select binTable file',
+                #                 subset=TRUE,
+                #                 pattern='.bint')
+                # ),
+                shiny::fluidRow(
+                    shiny::fileInput(
+                        pcaNServer('epicBed'),
+                        label='select EpiCounts.bed',
+                        multiple=TRUE
+                    )
+                    # selectFile (pcaNServer('epicTable'),
+                    #             path=pointin (wdPath, 'PCA') ,
+                    #             label='select epiCounts file',
+                    #             subset=TRUE,
+                    #             pattern='.epiCounts.tsv')
+                )
+            )
+        })
         }
 
     })
