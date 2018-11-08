@@ -26,6 +26,6 @@ devtools::install_github("lucidif/HiCeekR", dependencies=TRUE, repos=BiocInstall
 At the begin, launch the app by commands
 
 ````
-library(“HiCeekR”)
+library(HiCeekR)
 HiCeekR()
 ````
