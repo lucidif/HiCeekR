@@ -124,8 +124,16 @@ ui<-shiny::shinyUI (
                                                                         ,"load"
                                                                         )
                                                                     )),
-                                            shiny::column(8, shiny::br(),
-                                            shiny::textOutput("configHelper")
+                                            shiny::column(8,
+                                                          shiny::br(),
+                                                          shiny::fluidRow(
+                                            shiny::textOutput("configHelper")),
+                                            shiny::fluidRow(
+                                                shiny::textOutput("dataPh")
+                                                ),
+                                            shiny::fluidRow(
+                                                shiny::textOutput("phLoc")
+                                                )
                                                         )
                                             ),
             shiny::conditionalPanel( condition="input.loadOrNewConf == 'new'",
@@ -146,16 +154,21 @@ ui<-shiny::shinyUI (
                             #     )
                             # )
                                 ),
-                    shiny::column(1
-                            ,busyIndUI(
-                                shiny::actionButton("makeConfig",
-                                                    label="set",
-                                                    class = "btn-primary"
-                                                    ,width="100%"
-                                                    )
-                                )
-                            ),
-                    shiny::column(8,
+                    # shiny::column(1
+                    #         ,busyIndUI(
+                    #             shiny::actionButton("makeConfig",
+                    #                                 label="set",
+                    #                                 class = "btn-primary"
+                    #                                 ,width="100%"
+                    #                                 )
+                    #             )
+                    #         ),
+
+                    # shiny::column(1,
+                    #             shiny::textOutput("configTxt")
+                    #             ),
+
+                    shiny::column(7,
                                 shiny::uiOutput("wdPathText")
                                 )
                 ),
@@ -178,20 +191,63 @@ ui<-shiny::shinyUI (
                                   )
 
                                 ),
+                    # shiny::column(1,
+                    #             busyIndUI(
+                    #                 shiny::actionButton("loadConfig",
+                    #                                     label="set",
+                    #                                     class = "btn-primary"
+                    #                                     ,width="100%"
+                    #                   )
+                    #               )
+                    #             ),
                     shiny::column(1,
-                                busyIndUI(
-                                    shiny::actionButton("loadConfig",
-                                                        label="set",
-                                                        class = "btn-primary"
-                                                        ,width="100%"
-                                      )
-                                  )
+                                shiny::textOutput("configTxt")
                                 ),
-                    shiny::column(8,
+                    shiny::column(7,
                                 shiny::textOutput("configPathText")
                                 )
                 )
                                 )
+
+        ,shiny::conditionalPanel(condition="output.dataPh == 'data path selected'
+                                 && input.loadOrNewConf == 'load'
+                                 ",
+
+                                # shiny::actionButton("test",
+                                #                     label="test"
+                                #                     )
+                                shiny::fluidRow(
+                                shiny::column(1,
+                                              busyIndUI(
+                                                  shiny::actionButton("loadConfig",
+                                                                      label="set",
+                                                                      class = "btn-primary"
+                                                                      ,width="100%"
+                                                  )
+                                              )
+                                ))
+
+                                )
+
+        ,shiny::conditionalPanel(condition="output.dataPh == 'data path selected'
+                                 && input.loadOrNewConf == 'new'
+                                 ",
+
+                                 # shiny::actionButton("test",
+                                 #                     label="test"
+                                 #                     )
+                                shiny::fluidRow(
+                                 shiny::column(1,
+                                               busyIndUI(
+                                                   shiny::actionButton("makeConfig",
+                                                                       label="set",
+                                                                       class = "btn-primary"
+                                                                       ,width="100%"
+                                                   )
+                                               )
+                                 ))
+
+        )
 
         )
         ),

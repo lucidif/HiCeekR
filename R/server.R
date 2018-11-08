@@ -24,13 +24,18 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
         SysVal<-matrix(nrow=1,ncol=1)
         SysVal[1,1]<-TRUE
         rownames(SysVal)<-"restart"
-        save(SysVal,file="./SysVal.Robj")
+        save(SysVal,file=paste0(getwd(),"/SysVal.Robj"))
         print("sysGenerate")
     }
 
     if (file.exists("./HCR.config")==TRUE){
         print("preWd")
-        workingDir<-as.character((read.table(configFilePath))[1,1])
+        workingDir<-as.character(
+            paste0(
+            (read.table(configFilePath))[2,1],
+            (read.table(configFilePath))[1,1])
+            )
+        print(paste0("working dir:",workingDir))
         print("postWd")
         print("workingDir")
         ####confTable<-matrix(ncol=1,nrow=2)
@@ -125,31 +130,53 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
 
     shiny::observeEvent(input$wdPath,{
 
-        output$wdPathText<-shiny::renderText({
+        output$dataPh <-shiny::renderText({
+            "data path selected"
+        })
 
+        #output$wdPathText<-shiny::renderText({
+        output$phLoc<-shiny::renderText({
             if (is.atomic(input$wdPath)==FALSE){
-            paste0(
-                    "path selected: ",
-                    shinyDirPath(input$wdPath)
-            )}
+            # paste0(
+            #         "path selected: ",
+            #         shinyDirPath(unlist(input$wdPath))
+            # )
+                shinyDirPath(unlist(input$wdPath))
+                }
             })
     })
 
     shiny::observeEvent(input$configPath,{
-        output$configPathText<-shiny::renderText({
+        # output$configTxt<-shiny::renderText({
+        #     if (is.atomic(input$configPath)==FALSE){
+        #
+        #             "file selected: "
+        #             #shinyFilesPath(unlist(input$configPath))
+        #         }
+        # })
+
+        output$dataPh <-shiny::renderText({
+            "data path selected"
+        })
+
+        #output$configPathText<-shiny::renderText({
+        output$phLoc<-shiny::renderText({
             if (is.atomic(input$configPath)==FALSE){
-            paste0(
-                "file selected: ",
+            # paste0(
+            #     "file selected: ",
+            #     shinyFilesPath(unlist(input$configPath$files))
+            #     #shinyFilesPath(unlist(input$configPath))
+            # )
                 shinyFilesPath(unlist(input$configPath$files))
-                #shinyFilesPath(unlist(input$configPath))
-                   )}
+                }
         })
     })
 
     shiny::observeEvent(input$bamFile,{
         output$bamPathShow<-shiny::renderText({
             if (is.atomic(input$bamFile)==FALSE){
-            paste0("file selected:",shinyFilesPath(unlist(input$bamFile$files)))
+            paste0("file selected:", rea$volumes,
+                   shinyFilesPath(unlist(input$bamFile$files)))
             }
         })
     })
@@ -157,7 +184,8 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
     shiny::observeEvent(input$refGenome,{
         output$textReference<-shiny::renderText({
             if (is.atomic(input$refGenome)==FALSE){
-                paste0("file selected:",shinyFilesPath(unlist(input$refGenome$files)))
+                paste0("file selected:", rea$volumes,
+                       shinyFilesPath(unlist(input$refGenome$files)))
             }
 
         })
@@ -173,8 +201,19 @@ if (file.exists("HCRtmp.config")==TRUE){
     #print("temp exist")
     #print(getwd())
     output$configFileText<-shiny::renderText({""})
-    #workingDir<-as.character((read.table('HCRtmp.config'))[1,1])
-    rea$workingDir<-as.character(paste0((read.table('HCRtmp.config'))[1,1],"HiCeekRwd/"))
+    #ttCfg<<-read.table('HCRtmp.config')
+    #rea$workingDir<-as.character((read.table('HCRtmp.config'))[1,1])
+    # rea$workingDir<-as.character(paste0((read.table('HCRtmp.config'))[2,1],
+    #                                     (read.table('HCRtmp.config'))[1,1],
+    #                                     "HiCeekRwd/"))
+    rea$workingDir<-as.character(paste0(
+                                        (read.table('HCRtmp.config'))[1,1],
+                                        "HiCeekRwd/"))
+
+    #print (paste0("baseDir:", (read.table('HCRtmp.config'))[2,1]))
+    print (paste0("prjDir:", (read.table('HCRtmp.config'))[1,1]))
+    print (paste0("wkDir: ", isolate(rea$workingDir)))
+
     #prjName<-as.character((read.table('HCRtmp.config'))[2,1])
 
     file.remove("HCRtmp.config")
@@ -254,6 +293,8 @@ output$selector<-shiny::renderUI({
 
 
 shiny::observeEvent(input$loadNewPrj,{
+    #pointTest<<-pointin(rea$workingDir,
+    #        "Projects")
     if (input$loadNewPrj == "load"){
         output$prjName<-shiny::renderUI({
             prjManPanel_loadProject(rea$workingDir)
@@ -302,10 +343,30 @@ shiny::observeEvent(input$loadNewAn,{
 shiny::observeEvent(input$makeConfig,{
 
     busyIndServer("makeConfig",{
-        makeConfig(shinyDirPath(input$wdPath))
-        output$configFileText<-renderText({""})
         #workingDir<-as.character((read.table('HCRtmp.config'))[1,1])
-        rea$workingDir<-as.character(paste0((read.table('HCR.config'))[1,1],"HiCeekRwd/"))
+
+        #============================================
+        makeConfig(shinyDirPath(unlist(input$wdPath)))
+        #============================================
+
+        rea$workingDir<-as.character(paste0((read.table('HCR.config'))[2,1],
+                                            (read.table('HCR.config'))[1,1],
+                                            "HiCeekRwd/"))
+
+        # dir.create(paste0((read.table('HCR.config'))[2,1],
+        #                   (read.table('HCR.config'))[1,1],
+        #                   "HiCeekRwd/"),
+        #             showWarnings = TRUE
+        #            )
+
+        #dir.create(paste0(rea$working))
+        makeHCRwd(path=paste0((read.table('HCR.config'))[2,1],
+                              (read.table('HCR.config'))[1,1]
+                              ))
+
+        output$configFileText<-renderText({""})
+
+        print (paste0("wkDir: ", rea$workingDir))
         #prjName<-as.character((read.table('HCR.config'))[2,1])
 
         output$prjManagerSlot<-shiny::renderUI({
@@ -332,13 +393,23 @@ shiny::observeEvent(input$loadConfig,{
         #                 shinyFiles::getVolumes()()[Sys.info()["user"]],
         #                 shinyFilesPath(unlist(input$configPath$files)))
 
+        setwd((read.table(shinyFilesPath(unlist(input$configPath$files))))[2,1])
+
+
+
         print(paste0("to: ", paste0(getwd(),"/HCR.config")))
         file.copy(from=shinyFilesPath(unlist(input$configPath$files)),to=paste0(getwd(),"/HCR.config"))
         #unlist(input$configPath$files)
         output$configFileText<-shiny::renderText({""})
-        #workingDir<-as.character((read.table('HCRtmp.config'))[1,1])
-        rea$workingDir<-as.character(paste0((read.table('HCR.config'))[1,1],"HiCeekRwd/"))
-        prjName<-as.character((read.table('HCR.config'))[2,1])
+
+        #rea$workingDir<-as.character(paste0((read.table('HCR.config'))[1,1],"HiCeekRwd/"))
+
+        rea$workingDir<-as.character(paste0((read.table('HCR.config'))[2,1],
+                                            (read.table('HCR.config'))[1,1],
+                                            "HiCeekRwd/"))
+        print(paste0("wkDir: ", rea$workingDir))
+        #prjName<-as.character((read.table('HCR.config'))[2,1])
+        prjName<-"NONE" #<- va definito dopo
 
         output$prjManagerSlot<-shiny::renderUI({
             prjManagerMainUI()
@@ -442,7 +513,7 @@ shiny::observeEvent(input$newAnalysis,{
         }
 
         rea$anDir <- paste0(rea$prjDir,input$anNewName,"/")
-        print("rea$anDir ok")
+        print("rea$anDir....ok")
 
         if (input$inputType == "BAM"){
 
@@ -459,10 +530,13 @@ shiny::observeEvent(input$newAnalysis,{
             #print(shinyFilesPath(input$refGenome))
             #print(shinyFilesPath(input$refGenome, last=TRUE))
             #print(unlist(input$bamFile$files))
-            itValues<-c(shinyFilesPath(unlist(input$bamFile$files)) , input$binSize,
+            itValues<-c(shinyFilesPath(paste0(
+                rea$volumes,
+                unlist(input$bamFile$files))) ,
+                input$binSize,
                         input$inputType, prjName, input$anNewName,
-                        paste0("Reference Genome:",
-                               shinyFilesPath(unlist(input$refGenome$files, last=TRUE))
+                        paste0("Reference Genome:", rea$volumes,
+                               shinyFilesPath(unlist(input$refGenome$files), last=TRUE)
                                )
                         )
             #itValuesTT<<-itValues
@@ -485,7 +559,10 @@ shiny::observeEvent(input$newAnalysis,{
 
             print("before Param")
             print(unlist(input$refGenome$files))
-            param<-refGenomeEdit(refGenome = shinyFilesPath(unlist(input$refGenome$files)),
+            param<-refGenomeEdit(refGenome = paste0(rea$volumes,
+                                                    shinyFilesPath(unlist(input$refGenome$files)
+                                                                   )
+                                                    ),
                                 enzyme = input$cutSite,
                                 overhang = input$overhang,
                                 name = "refGenFrag",
@@ -497,7 +574,10 @@ shiny::observeEvent(input$newAnalysis,{
             print("param obtained")
 
             reportTable<-bamMatching(
-                bam.datapath=shinyFilesPath(unlist(input$bamFile$files)),
+                bam.datapath=paste0(rea$volumes,shinyFilesPath(#paste0(getwd(),
+                    unlist(input$bamFile$files)
+                    #)
+                    )),
                 param=param,
                 h5PathOut=pointin(rea$anDir,
                                   "Pre-Processing",

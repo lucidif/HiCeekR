@@ -9,7 +9,7 @@
 #' @examples
 shinyFilesPath<-function(input, last=FALSE){
     unin<-input
-    #uninTT<<-unin
+    #uninTT<<-parseFilePaths(input)
     #unin<-unlist(input$files)
     for (i in 1:(length(unin)-1)){
         unin[[i]][1]<-paste0(unin[[i]][1],"/")
@@ -19,15 +19,16 @@ shinyFilesPath<-function(input, last=FALSE){
 
     path<-paste(unin,collapse="")
 
-    path<-paste0(
-        shinyFiles::getVolumes()()["Computer"],
-        shinyFiles::getVolumes()()[Sys.info()["user"]],
-        path
-    )
+    #path assoluto da modificare
+    # path<-paste0(
+    #     shinyFiles::getVolumes()()["Computer"],
+    #     shinyFiles::getVolumes()()[Sys.info()["user"]],
+    #     path
+    # )
 
 
     if(last==TRUE){
-        print(paste0("lasto:",lastro))
+        print(paste0("lasto:",lasto))
         return(lasto)
     } else { #last==FALSE
         print(paste0("path:",path))
@@ -53,11 +54,12 @@ shinyDirPath<-function(input){
     }
 
     path<-paste(unin2,collapse="")
-    path<-paste0(
-        shinyFiles::getVolumes()()["Computer"],
-        shinyFiles::getVolumes()()[Sys.info()["user"]],
-        path
-    )
+
+    # path<-paste0(
+    #     shinyFiles::getVolumes()()["Computer"],
+    #     shinyFiles::getVolumes()()[Sys.info()["user"]],
+    #     path
+    # )
 
     return(path)
 

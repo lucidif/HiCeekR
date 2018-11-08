@@ -13,7 +13,10 @@
 #' @examples
 #'
 makeConfig=function(path=paste0(getwd(),"/")){
-    write.table(path, "HCR.config", col.names=FALSE, row.names=FALSE,
+    cfMatrix<-matrix(ncol=1,nrow=2)
+    cfMatrix[1,1]<-path
+    cfMatrix[2,1]<-getwd()
+    write.table(cfMatrix, "HCR.config", col.names=FALSE, row.names=FALSE,
                 quote=FALSE, sep="\t")
     #print(paste0("working path:",path, ".....setted"))
 }
