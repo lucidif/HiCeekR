@@ -296,7 +296,7 @@ prjSettings_Server <- function(input, output, session, prjManExport){
 
                     ,shiny::column(3, shiny::br(), shiny::br(),
                                 shiny::actionButton(nspace("newAnalysis"),
-                                                label = h5("make new analysis"),
+                                                label = h5("make new analysis mod"),
                                                 width = "100%"
                                 )
 

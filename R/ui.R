@@ -363,26 +363,36 @@ ui<-shiny::shinyUI (
                                                                     )
                                                                 )
                                                     ),
-                                        shiny::column(2
-                                            #,shiny::br(),
-                                            ## shiny::checkboxInput("lowMem",
-                                            ##                     label =
-                                            ##                     shiny::h5
-                                            ##                     ("low memory"),
-                                            ##                     value = FALSE
-                                            ##                     )
-                                            ## selectFile(
-                                            ##     id="refGenome",
-                                            ##     path = obtainWd(),
-                                            ##     label= "reference"
-                                            ## )
-                                            ## shiny::uiOutput("refgenSlot")
-                                            # shinyFiles::shinyFilesButton(
-                                            #     'refGenome',
-                                            #     label='select reference',
-                                            #     title='Select reference genome'
-                                            #     ,multiple=FALSE)
-                                                    )
+                                        shiny::column(5, shiny::br(), shiny::br(),
+                                                      busyIndUI(
+                                                      shiny::actionButton("newAnalysis",
+                                                            label = shiny::h5("make new analysis"),
+                                                            class = "btn-primary",
+                                                            width = "100%"
+                                                      )
+                                                      )
+
+                                        )
+                                        # ,shiny::column(2
+                                        #     #,shiny::br(),
+                                        #     ## shiny::checkboxInput("lowMem",
+                                        #     ##                     label =
+                                        #     ##                     shiny::h5
+                                        #     ##                     ("low memory"),
+                                        #     ##                     value = FALSE
+                                        #     ##                     )
+                                        #     ## selectFile(
+                                        #     ##     id="refGenome",
+                                        #     ##     path = obtainWd(),
+                                        #     ##     label= "reference"
+                                        #     ## )
+                                        #     ## shiny::uiOutput("refgenSlot")
+                                        #     # shinyFiles::shinyFilesButton(
+                                        #     #     'refGenome',
+                                        #     #     label='select reference',
+                                        #     #     title='Select reference genome'
+                                        #     #     ,multiple=FALSE)
+                                        #             )
                                         # ,shiny::column(2, shiny::br(),
                                         #     shiny::textOutput("textReference")
                                         #         )

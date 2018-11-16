@@ -1,5 +1,5 @@
-configFilePath="./HCR.config"
-#configFilePath=paste0(getwd(),"/HCR.config")
+#configFilePath="./HCR.config"
+configFilePath=paste0(getwd(),"/HCR.config")
 
 if (file.exists(configFilePath)==TRUE){
     workingDir<-as.character((read.table(configFilePath))[1,1])

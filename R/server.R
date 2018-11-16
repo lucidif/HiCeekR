@@ -1087,7 +1087,7 @@ shiny::observeEvent(input$Networks_start,{
             })
         }
 
-        if (input$mainNav == 'EpigeneticFeatures' &
+        if (input$mainNav == 'PCA' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
             output$moduleScreen<-shiny::renderUI({})
             output$selectPn<-shiny::renderUI({})
@@ -1300,7 +1300,7 @@ shiny::observeEvent(input$Networks_start,{
                                                           wdPath=rea$anDir)
                 }
 
-                if (input$mainNav == 'EpigeneticFeatures' &
+                if (input$mainNav == 'PCA' &
                     file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
                     #source ('pca_postProcessing.R')
                     tool_pca <- 'pca_postProcessing'

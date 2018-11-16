@@ -10,8 +10,10 @@
 #'
 #'
 #' @export
-HiCeekR<-function (configFilePath="./HCR.config"){
+HiCeekR<-function (configFilePath=getwd()){
 
+    #configFilePath="./HCR.config"
+    setwd(configFilePath)
     ####shiny::runApp(appDir="R/")
     # if (file.exists(configFilePath)==TRUE){
     # workingDir<-as.character((read.table(configFilePath))[1,1])

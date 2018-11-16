@@ -52,7 +52,7 @@ mainNav<-function(inType="BAM"){
                               ),
 
                               shiny::navbarMenu('Post-Processing',
-                                    shiny::tabPanel ('EpigeneticFeatures',
+                                    shiny::tabPanel ('PCA',
                                                      shiny::uiOutput ('pcaSlot')
                                             ),
 
@@ -103,7 +103,7 @@ mainNav<-function(inType="BAM"){
 
                               shiny::navbarMenu('Post-Processing',
 
-                                shiny::tabPanel('Epigenetic Features',
+                                shiny::tabPanel('PCAdeprec',
                                     shiny::uiOutput('pcaSlot')
                                                 ),
 

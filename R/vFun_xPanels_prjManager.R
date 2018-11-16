@@ -261,16 +261,16 @@ prjManPanel_anlysisInputType<- function(){
                       )
         )
 
-        ,shiny::column(3, shiny::br(), shiny::br(),
-                    busyIndUI(
-                        shiny::actionButton("newAnalysis",
-                                            label = h5("make new analysis"),
-                                            class = "btn-primary",
-                                            width = "100%"
-                        )
-                       )
-
-        )
+        # ,shiny::column(3, shiny::br(), shiny::br(),
+        #             busyIndUI(
+        #                 shiny::actionButton("newAnalysis",
+        #                                     label = h5("make new analysis"),
+        #                                     class = "btn-primary",
+        #                                     width = "100%"
+        #                 )
+        #                )
+        #
+        # )
     )
     )
 }
@@ -344,7 +344,7 @@ prjManPanel_inputBAM<-function(prjFolder,input){
                 ),
             shiny::column(5, shiny::br(),
                 shiny::selectInput("binSize",
-                                    label = "bin size",
+                                    label = "bin size deprecated",
                                     choices = c( "1000000",
                                                 "100000",
                                                 "50000",
@@ -353,21 +353,32 @@ prjManPanel_inputBAM<-function(prjFolder,input){
                                                 )
                                     )
             ),
-            shiny::column(5
-                # ,shiny::br(),
-                # shiny::checkboxInput("lowMem",
-                #                     label = h5("low memory"),
-                #                     value = FALSE
-                # )
-                # selectFile(
-                #     id="refGenome",
-                #     path = pointin(rea$workingDir, "RefGen"),
-                #     label= "reference"
-                # )
-                #shiny::uiOutput("refgenSlot")
+            shiny::column(5, shiny::br(), shiny::br(),
+                          #busyIndUI(
+                              shiny::actionButton("newAnalysis",
+                                                  label = shiny::h5("make new analysis"),
+                                                  #class = "btn-primary",
+                                                  width = "100%"
+                              )
+                          #)
+
             )
+            # ,shiny::column(5
+            #     # ,shiny::br(),
+            #     # shiny::checkboxInput("lowMem",
+            #     #                     label = h5("low memory"),
+            #     #                     value = FALSE
+            #     # )
+            #     # selectFile(
+            #     #     id="refGenome",
+            #     #     path = pointin(rea$workingDir, "RefGen"),
+            #     #     label= "reference"
+            #     # )
+            #     #shiny::uiOutput("refgenSlot")
+            # )
             #)
             )
+
 
         ))
     )

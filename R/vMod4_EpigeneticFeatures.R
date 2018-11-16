@@ -17,71 +17,71 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
 
         shiny::tabsetPanel ( #pcaNS('tabSetPCA'),
 
-            shiny::tabPanel( 'prepare PCA'
-
-                ,shiny::wellPanel (
-
-                    shiny::fluidRow (
-
-                        shiny::column (12,
-
-                            shiny::selectInput (pcaNS('dataType'),
-                                                label='data type',
-                                                choices = c(#'bint.tsv',
-                                                            #'epiCounts',
-                                                            'EpiCounts.bed'
-                                                            )
-                                                )
-
-                                        )
-
-                                    ),
-
-                    shiny::fluidRow (
-                        shiny::column (8,
-
-                                                #fileInput (pcaNS('binTable'), label='select binTable file')
-
-                                                #selectFile (pcaNS('binTable'), path=pointin (wdPath, 'Binning') ,label='select binTable file', subset=TRUE, pattern='.bint')
-                                shiny::uiOutput (pcaNS('selFileSlot'))
-
-                                        )
-
-                                        #column (3,
-                                        #        textInput (pcaNS('name'), label='name')
-                                        #        )
-                                        #,
-                                        ,
-                                shiny::column (2,
-                                    shiny::br(),
-                                    shiny::br(),
-                                    shiny::actionButton (pcaNS('genPcaMod'),
-                                                         label='generate')
-                                        )
-                                        #,
-                                        #column(1,br(),
-                                        #      uiOutput (pcaNS('finish'))
-                                        #        )
-
-                                    ),
-
-
-
-                    shiny::uiOutput (pcaNS('secondRow')),
-
-                    shiny::uiOutput (pcaNS('thirdRow')),
-
-                    shiny::fluidRow (
-
-                        shiny::dataTableOutput(pcaNS('tableScreen'))
-                                        #dataTableOutput(pcaNS('tableScreen'))
-
-                                    )
-
-
-
-                                )
-                      ),
+            #' shiny::tabPanel( 'prepare PCA'
+            #'
+            #'     ,shiny::wellPanel (
+            #'
+            #'         shiny::fluidRow (
+            #'
+            #'             shiny::column (12,
+            #'
+            #'                 shiny::selectInput (pcaNS('dataType'),
+            #'                                     label='data type',
+            #'                                     choices = c(#'bint.tsv',
+            #'                                                 #'epiCounts',
+            #'                                                 'EpiCounts.bed'
+            #'                                                 )
+            #'                                     )
+            #'
+            #'                             )
+            #'
+            #'                         ),
+            #'
+            #'         shiny::fluidRow (
+            #'             shiny::column (8,
+            #'
+            #'                                     #fileInput (pcaNS('binTable'), label='select binTable file')
+            #'
+            #'                                     #selectFile (pcaNS('binTable'), path=pointin (wdPath, 'Binning') ,label='select binTable file', subset=TRUE, pattern='.bint')
+            #'                     shiny::uiOutput (pcaNS('selFileSlot'))
+            #'
+            #'                             )
+            #'
+            #'                             #column (3,
+            #'                             #        textInput (pcaNS('name'), label='name')
+            #'                             #        )
+            #'                             #,
+            #'                             ,
+            #'                     shiny::column (2,
+            #'                         shiny::br(),
+            #'                         shiny::br(),
+            #'                         shiny::actionButton (pcaNS('genPcaMod'),
+            #'                                              label='generate')
+            #'                             )
+            #'                             #,
+            #'                             #column(1,br(),
+            #'                             #      uiOutput (pcaNS('finish'))
+            #'                             #        )
+            #'
+            #'                         ),
+            #'
+            #'
+            #'
+            #'         shiny::uiOutput (pcaNS('secondRow')),
+            #'
+            #'         shiny::uiOutput (pcaNS('thirdRow')),
+            #'
+            #'         shiny::fluidRow (
+            #'
+            #'             shiny::dataTableOutput(pcaNS('tableScreen'))
+            #'                             #dataTableOutput(pcaNS('tableScreen'))
+            #'
+            #'                         )
+            #'
+            #'
+            #'
+            #'                     )
+            #'           ),
 
             shiny::tabPanel ('PCA'
 
@@ -96,7 +96,7 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
                                             shiny::uiOutput (pcaNS('pcaTableSlot'))
                                         ),
 
-                                     shiny::column (2,
+                                     shiny::column (2, shiny::br(),
 
                                         shiny::actionButton (pcaNS('startPca'),
                                                              'start PCA')
@@ -154,7 +154,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
     ##
     output$pcaTableSlot<- shiny::renderUI ({
-        selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'pca table', subset=TRUE, pattern='.epiCounts.tsv')
+        selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'.hkr.pca file', subset=TRUE, pattern='.hkr.pca')
     })
 
 
