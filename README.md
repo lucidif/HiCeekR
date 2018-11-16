@@ -11,8 +11,9 @@ install.packages("devtools")
 and BiocInstaller from Bioconductor website
 
 ````
-source("https://bioconductor.org/biocLite.R")
-biocLite("BiocInstaller")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("BiocInstaller", version = "3.8")
 ````
 
 Now you can install HiCeekR with command
@@ -26,6 +27,6 @@ devtools::install_github("lucidif/HiCeekR", dependencies=TRUE, repos=BiocInstall
 At the begin, launch the app by commands
 
 ````
-library(“HiCeekR”)
+library(HiCeekR)
 HiCeekR()
 ````
