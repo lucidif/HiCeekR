@@ -75,7 +75,8 @@ pointin<- function(analysisFolder, specificFolderName , sys=FALSE){
         specificFolderName == "Normalization" |
         specificFolderName == "Downstream" |
         specificFolderName == "Visualization" |
-        specificFolderName == "Report"
+        specificFolderName == "Report" |
+        specificFolderName == "tmpimg"
     ) {
 
         poi<- paste0(zl,projectName, "/", analysisName, "/",

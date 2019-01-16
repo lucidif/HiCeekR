@@ -32,7 +32,19 @@ HCRunlist <- function (x)
 #' @examples
 bamToDataFrame <- function (bamPath, chromosome, start, end){
     #read in entire BAM file
-    bam <- Rsamtools::scanBam(bamPath)
+
+    #set Parameters
+    maxBT<- end
+    minBT<- start
+    library("IRanges")
+    #test<- paste0 ('wh <- RangesList(', chromosome,' = IRanges(minBT, maxBT))')
+    wh <- GenomicRanges::GRanges( chromosome , IRanges(minBT, maxBT))
+    #eval(parse(text=test))
+    what <- c("rname","pos", "qwidth")
+    parameter <- Rsamtools::ScanBamParam(which=wh, what=what)
+
+    #read in entire BAM file
+    bam <- Rsamtools::scanBam(bamPath, param=parameter)
 
     #names of the BAM fields
     print(names(bam[[1]]))
@@ -50,7 +62,7 @@ bamToDataFrame <- function (bamPath, chromosome, start, end){
     list <- lapply(bam_field, function(y) HCRunlist(lapply(bam, "[[", y)))
 
     #store as data frame
-    bam_df <- do.call("DataFrame", list)
+    bam_df <- do.call("data.frame", list)
     #bam_dfTT<<-bam_df
     names(bam_df) <- bam_field
 

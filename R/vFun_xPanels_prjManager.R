@@ -256,7 +256,7 @@ prjManPanel_anlysisInputType<- function(){
                                         label = h5(""),
                                         choices = c("BAM"
                                                     #,"Matrix"
-                                        #,"Multi"
+                                                    ,"Multiple"
                                         )
                       )
         )

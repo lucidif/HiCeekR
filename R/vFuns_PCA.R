@@ -19,7 +19,7 @@ pcaMatrixModel<- function (binTablePath, columnNumber=1){
 
     for (i in 1:lenbinTab){
         name<-paste0(as.character(bintab[i,1]),':',as.character(bintab[i,2]),'-',as.character(bintab[i,3]))
-        print (name)
+        #print (name)
 
         binTabImported[i,1]<-name
     }
@@ -95,7 +95,7 @@ bamPca <- function (binTablePath, bamPath, pcaMatrixModelOut ,
     lenBinNames<- length (binNames)
     print ('lenBinNames.....OK')
 
-    for (i in 1:lenbinTab){
+    for (i in 1:lenbinTab){ #togli questo for
         #name<-paste0(bintab[i,2],',',bintab[i,3],',',bintab[i,4])
 
         # binTabImported[i,1]<-as.character(bintab$seqnames)
@@ -108,7 +108,7 @@ bamPca <- function (binTablePath, bamPath, pcaMatrixModelOut ,
 
     }
 
-    View (binTabImported)
+    #View (binTabImported)
 
     #maxbinTabImpo<-length (unique (binTabImported[,1]))
     #indexMatrix<-matrix (nrow=maxbinTabImpo, ncol=2) #prima colonna nome cromosoma, seconda colonna numero riga in cui inizia
@@ -162,7 +162,7 @@ bamPca <- function (binTablePath, bamPath, pcaMatrixModelOut ,
             chrom<-as.character(binTabImported [i,1])
 
             binTabImportedSub<- subset (binTabImported , binTabImported[,1]== binTabImported [i,1] )
-            print (head (binTabImportedSub))
+            #print (head (binTabImportedSub))
             start <- as.numeric (min (as.numeric(binTabImportedSub[,2])))
             end <- as.numeric (max ( as.numeric(binTabImportedSub[,3])))
 

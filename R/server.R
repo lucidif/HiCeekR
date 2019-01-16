@@ -1,5 +1,6 @@
 options(shiny.maxRequestSize=300*1024^2,stringsAsFactors = FALSE)
-shiny::addResourcePath("www", "./www")
+#shiny::addResourcePath("www", "./www")
+
 #R.home
 
 #require(R6)
@@ -17,24 +18,35 @@ shiny::addResourcePath("www", "./www")
 #======mainStataments==========================================================
 server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
     #print (session$ns)
+    configFilePath<-paste0(getwd(),"/HCR.config")
+    print(paste0("server wd: ",getwd()))
     shinyjs::hide(id = "loading-content", anim = TRUE, animType = "fade")
     shinyjs::show("app-content")
+    print(paste0("server wd2: ",getwd()))
+    shiny::addResourcePath("hcrimg", system.file("www",package = "HiCeekR"))
 
+    print(system.file("hcrtmpimg","HiCeekR"))
     if (file.exists("./SysVal.Robj")==FALSE){
+        print(paste0("server wd3: ",getwd()))
         SysVal<-matrix(nrow=1,ncol=1)
         SysVal[1,1]<-TRUE
         rownames(SysVal)<-"restart"
         save(SysVal,file=paste0(getwd(),"/SysVal.Robj"))
         print("sysGenerate")
+        print(paste0("server wd4: ",getwd()))
     }
 
-    if (file.exists("./HCR.config")==TRUE){
+    if (file.exists(paste0(getwd(),"/HCR.config"))==TRUE){
         print("preWd")
+        paste0(getwd(),"/HCR.config")
+        print(paste0("load config wd:",getwd(),"/HCR.config"))
+        #configFilePath<-paste0(getwd(),"/HCR.config")
         workingDir<-as.character(
             paste0(
             (read.table(configFilePath))[2,1],
             (read.table(configFilePath))[1,1])
             )
+        print(paste0("config: ", configFilePath))
         print(paste0("working dir:",workingDir))
         print("postWd")
         print("workingDir")
@@ -49,6 +61,29 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
     load("./SysVal.Robj")
 
     rea<-shiny::reactiveValues()
+
+    if (dir.exists(paste0(getwd(),"/www"))){
+        #rea$delend<-FALSE
+        delend<-reactiveVal(FALSE)
+        shiny::stopApp()
+        #file.rename(from=paste0(getwd(),"/www"), to=paste0(getwd(),"/wwwhcr"),recursive=TRUE)
+        stop(paste0("there is 'www' folder in working directory: ", getwd(),", please try to delete manualy www folder. You can show manual for more details \n"))
+        #geterrmessage("there are 'www' folder in working directory, please try to delete manualy www folder. You can show manual for more details \n")
+    } else {
+        file.copy(from=system.file("www",package = "HiCeekR"),to=getwd(),recursive=TRUE)
+        #rea$delend<-TRUE
+        #rea$delend<-TRUE
+        delend<-reactiveVal(FALSE)
+    }
+
+     # output$multipleSlot<-renderUI({
+     #    #prjLoadName
+     #    print(paste0("wd path:",getwd()))
+     #    shiny::checkboxGroupInput("prjSelector",
+     #             label="",
+     #             choices=list.dirs(path=paste(rea$workingDir)
+     #                             ))
+     # })
 
     #rea$volumes<-c(root = "/")
     #rea$volumes<-c(root = getVolumes)
@@ -85,6 +120,10 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
         if (file.exists(paste0(getwd(),"/www/inOutWard_trimmed.jpeg"))==TRUE){
             file.remove(paste0(getwd(),"/www/inOutWard_trimmed.jpeg"))
         }
+        # if (delend==TRUE){
+        #     file.remove(paste0(getwd(),"/www"),recursive=TRUE)
+        # }
+        unlink(paste0(getwd(),"/www"),recursive=TRUE)
 
          # if (file.exists("./SysVal.Robj")==TRUE){
          #     load("./SysVal.Robj")
@@ -234,6 +273,33 @@ if (file.exists("HCRtmp.config")==TRUE){
     output$pathViewer<-shiny::renderDataTable({
         folderFrame(paste0(rea$workingDir, "Projects/"))
     })
+
+    output$multipleSlot<-renderUI({
+       #prjLoadName
+       #print(paste0("wd path:",getwd()))
+        foLs<-list.dirs(path=paste0(rea$workingDir,"Projects/",input$prjLoadName),
+                        full.names=FALSE,recursive = FALSE)
+        foLs<-foLs[!foLs %in% "ProjectData" ]
+        shiny::fluidRow(
+
+            shiny::column(6,
+                        shiny::checkboxGroupInput("prjSelector",
+                                                    label="",
+                                                    choices=foLs
+                          )
+                   ),
+            shiny::column(6,
+                   shiny::actionButton("newMultiAnalysis",
+                                       label = shiny::h5("make new analysis"),
+                                       class = "btn-primary",
+                                       width = "100%"
+                   )
+                   )
+        )
+
+
+    })
+
 } else {
 
     rea$config<-"none"
@@ -501,6 +567,35 @@ shiny::observeEvent(input$prjButton,{
 
 })
 
+shiny::observeEvent(input$newMultiAnalysis,{
+    print("make multiple analysis")
+    #paste0(rea$workingDir,"Projects/",input$prjLoadName)
+    print(input$prjSelector)
+    for (i in 1:length(input$prjSelector)){
+        print(paste0(rea$workingDir,"Projects/",
+                    input$prjLoadName,"/",
+                    input$prjSelector[i]))
+    }
+
+
+    output$navSlot<-shiny::renderUI({
+        mainNav(inType="Multiple")
+    })
+
+    output$prjState<-shiny::renderText({
+        "Analysis Selected"
+    })
+
+    output$prjManagerSlot<-shiny::renderUI({prjManPanel_reset(input$anNewName)})
+    ##devi creare uno specifico panel per il reset dall'analisi
+    #output$prjManagerSlot<-shiny::renderUI({})
+    output$welcomeSlot<-shiny::renderUI({})
+    output$pathViewer<-shiny::renderUI({})
+    output$multipleSlot<-shiny::renderUI({})
+    #input.inputType==
+
+})
+
 shiny::observeEvent(input$newAnalysis,{
 
 
@@ -630,6 +725,7 @@ shiny::observeEvent(input$newAnalysis,{
             #output$prjManagerSlot<-shiny::renderUI({})
             output$welcomeSlot<-shiny::renderUI({})
             output$pathViewer<-shiny::renderUI({})
+            output$multipleSlot<-shiny::renderUI({})
 
             #======================================esporta plot
             rea$diags<-diags
@@ -676,9 +772,9 @@ shiny::observeEvent(input$newAnalysis,{
 
         } else {
 
-            if (input$inputType == "Matrix"){
-
-            }
+            # if (input$inputType == "Multiple"){
+            #     print("make multiple analysis")
+            # }
 
         }
 
@@ -697,7 +793,8 @@ shiny::observeEvent(input$anButtonLoad,{
     #==========================================================================
 
     output$navSlot<-shiny::renderUI({
-        mainNav(inType="BAM")
+        #mainNav(inType="BAM")
+        mainNav(inType=input$inputType)
     })
 
     output$prjState<-shiny::renderText({
@@ -709,6 +806,7 @@ shiny::observeEvent(input$anButtonLoad,{
     #output$prjManagerSlot<-shiny::renderUI({})
     output$welcomeSlot<-shiny::renderUI({})
     output$pathViewer<-shiny::renderUI({})
+    output$multipleSlot<-shiny::renderUI({})
     aN<-input$anNewName
     output$pNameSlot<- shiny::renderText({aN})
     print(input$anLoadNames)
@@ -982,7 +1080,7 @@ shiny::observeEvent(input$Networks_start,{
             output$summarySlot <- shiny::renderUI ({
                 get(moduleUI_DetectInteraction) (tool_DetectInteraction,label='')
             })
-
+            #addResourcePath("images",pointin(rea$anDir, "tmpimg", sys=TRUE))
             loadApp_DetectInteraction <- shiny::callModule(
                 get(moduleLoad_DetectInteraction)
                 , tool_DetectInteraction,

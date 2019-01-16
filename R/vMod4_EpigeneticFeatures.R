@@ -17,73 +17,73 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
 
         shiny::tabsetPanel ( #pcaNS('tabSetPCA'),
 
-            #' shiny::tabPanel( 'prepare PCA'
-            #'
-            #'     ,shiny::wellPanel (
-            #'
-            #'         shiny::fluidRow (
-            #'
-            #'             shiny::column (12,
-            #'
-            #'                 shiny::selectInput (pcaNS('dataType'),
-            #'                                     label='data type',
-            #'                                     choices = c(#'bint.tsv',
-            #'                                                 #'epiCounts',
-            #'                                                 'EpiCounts.bed'
-            #'                                                 )
-            #'                                     )
-            #'
-            #'                             )
-            #'
-            #'                         ),
-            #'
-            #'         shiny::fluidRow (
-            #'             shiny::column (8,
-            #'
-            #'                                     #fileInput (pcaNS('binTable'), label='select binTable file')
-            #'
-            #'                                     #selectFile (pcaNS('binTable'), path=pointin (wdPath, 'Binning') ,label='select binTable file', subset=TRUE, pattern='.bint')
-            #'                     shiny::uiOutput (pcaNS('selFileSlot'))
-            #'
-            #'                             )
-            #'
-            #'                             #column (3,
-            #'                             #        textInput (pcaNS('name'), label='name')
-            #'                             #        )
-            #'                             #,
-            #'                             ,
-            #'                     shiny::column (2,
-            #'                         shiny::br(),
-            #'                         shiny::br(),
-            #'                         shiny::actionButton (pcaNS('genPcaMod'),
-            #'                                              label='generate')
-            #'                             )
-            #'                             #,
-            #'                             #column(1,br(),
-            #'                             #      uiOutput (pcaNS('finish'))
-            #'                             #        )
-            #'
-            #'                         ),
-            #'
-            #'
-            #'
-            #'         shiny::uiOutput (pcaNS('secondRow')),
-            #'
-            #'         shiny::uiOutput (pcaNS('thirdRow')),
-            #'
-            #'         shiny::fluidRow (
-            #'
-            #'             shiny::dataTableOutput(pcaNS('tableScreen'))
-            #'                             #dataTableOutput(pcaNS('tableScreen'))
-            #'
-            #'                         )
-            #'
-            #'
-            #'
-            #'                     )
-            #'           ),
+            shiny::tabPanel( 'prepare PCA'
 
-            shiny::tabPanel ('PCA'
+                ,shiny::wellPanel (
+
+                    shiny::fluidRow (
+
+                        shiny::column (12,
+
+                            shiny::selectInput (pcaNS('dataType'),
+                                                label='data type',
+                                                choices = c('bint.tsv'
+                                                            ,'epiCounts'
+                                                            #,'EpiCounts.bed'
+                                                            )
+                                                )
+
+                                        )
+
+                                    ),
+
+                    shiny::fluidRow (
+                        shiny::column (8,
+
+                                                #fileInput (pcaNS('binTable'), label='select binTable file')
+
+                                                #selectFile (pcaNS('binTable'), path=pointin (wdPath, 'Binning') ,label='select binTable file', subset=TRUE, pattern='.bint')
+                                shiny::uiOutput (pcaNS('selFileSlot'))
+
+                                        )
+
+                                        #column (3,
+                                        #        textInput (pcaNS('name'), label='name')
+                                        #        )
+                                        #,
+                                        ,
+                                shiny::column (2,
+                                    shiny::br(),
+                                    shiny::br(),
+                                    shiny::actionButton (pcaNS('genPcaMod'),
+                                                         label='generate')
+                                        )
+                                        #,
+                                        #column(1,br(),
+                                        #      uiOutput (pcaNS('finish'))
+                                        #        )
+
+                                    ),
+
+
+
+                    shiny::uiOutput (pcaNS('secondRow')),
+
+                    shiny::uiOutput (pcaNS('thirdRow')),
+
+                    shiny::fluidRow (
+
+                        shiny::dataTableOutput(pcaNS('tableScreen'))
+                                        #dataTableOutput(pcaNS('tableScreen'))
+
+                                    )
+
+
+
+                                )
+                      )
+
+            ,shiny::tabPanel ('PCA'
 
                             ,shiny::wellPanel (
 
@@ -144,6 +144,7 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
 pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                                     wdPath
                                     ){
+    print ("start PCA module")
     #plusval<-0
     pcaNServer<- session$ns
     #require ('Rsamtools')
@@ -152,25 +153,26 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
     #tPcaRea<- reactiveValues(tP='none')
     Reac<- shiny::reactiveValues(tP='none', S_pcaMod='none', S_exportThis='none') #non c'è bisogno che definisci prima la variabile reactiveValues() e poi definisci dopo
 
-    ##
+    print ("pcaTabSlot render")
     output$pcaTableSlot<- shiny::renderUI ({
         selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'.hkr.pca file', subset=TRUE, pattern='.hkr.pca')
     })
 
-
+    print ("start observer")
     shiny::observeEvent(input$bedLoadPath,{
         print("bedLoadPath")
         print (input$bedLoadPath)
         if ( input$bedLoadPath!="please select file"){
-            Reac$bedTab<-read.table(paste0(pointin(wdPath,'Epi'),input$bedLoadPath), sep="\t")
-            rownames(Reac$bedTab)<-rep(paste0(Reac$bedTab[,1],":",Reac$bedTab[,2],"-",Reac$bedTab[,3]))
-            Reac$bedTab<-Reac$bedTab[,-c(1:4)]
-            output$colSelectorSlot<-shiny::renderUI({
-                shiny::selectInput(pcaNServer('colSelector'),
-                            label="select column",
-                            choices=c(1:length(Reac$bedTab[1,]))
-                                )
-            })
+            print(paste0("EpiPath:",pointin(wdPath,'Epi'),input$bedLoadPath))
+            #Reac$bedTab<-read.table(paste0(pointin(wdPath,'Epi'),input$bedLoadPath), sep="\t")
+            #rownames(Reac$bedTab)<-rep(paste0(Reac$bedTab[,1],":",Reac$bedTab[,2],"-",Reac$bedTab[,3]))
+            #Reac$bedTab<-Reac$bedTab[,-c(1:4)]
+            # output$colSelectorSlot<-shiny::renderUI({
+            #     shiny::selectInput(pcaNServer('colSelector'),
+            #                 label="select column",
+            #                 choices=c(1:length(Reac$bedTab[1,]))
+            #                     )
+            # })
             #bedTabTT<<-bedTab
         }
 
@@ -186,13 +188,14 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         if (input$dataType=='bint.tsv'){
             bintabPath<- paste0 ( pointin(wdPath,'Binning'), input$binTable)
             Reac$pcaMod<-pcaMatrixModel(bintabPath)
-
+            Reac$A_pcaMod<-Reac$pcaMod
         }
 
         if (input$dataType=='epiCounts'){
             print ('in epiCounts')
             bintabPath<- paste0 ( pointin(wdPath,'PCA'), input$epicTable)
             Reac$pcaMod<-HCRread('',path=bintabPath)
+            Reac$A_pcaMod<-Reac$pcaMod
             regionsN<- rownames (Reac$pcaMod)
             regions<- matrix (ncol=1,nrow=length(regionsN))
             rownames(regions)<-rownames (Reac$pcaMod)
@@ -329,18 +332,20 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         print ('please wait')
 
         if (input$dataType=='bint.tsv'){
-            # pcaTable<-bamPca(paste0 ( pointin(wdPath,'Binning'),
-            #                            input$binTable),
-            #                   paste0 ( pointin(wdPath,'Epi'),
-            #                            input$bedLoadPath)
-            #                   , pcaMod, columnName=input$name, add=input$addBox )
-            #print (paste0(pointin(wdPath,'Epi'),input$bedLoadPath))
-            # bedLoad<-read.table(paste0 ( pointin(wdPath,'Epi'),
-            #                                 input$bedLoadPath),
-            #                     sep="\t"
-            #                     )
+             pcaTable<-bamPca(paste0 ( pointin(wdPath,'Binning'),
+                                        input$binTable),
+                               paste0 ( pointin(wdPath,'Epi'),
+                                        input$bedLoadPath)
+                               , Reac$pcaMod, columnName=input$name, add=input$addBox )
+            print (paste0(pointin(wdPath,'Epi'),input$bedLoadPath))
+             # bedLoad<-read.table(paste0 ( pointin(wdPath,'Epi'),
+             #                                 input$bedLoadPath),
+             #                     sep="\t"
+             #                     )
             #bedLoadTT<<-bedLoad
-            tabTT<<-merge(Reac$pcaMod, paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath))
+
+            #tabTT<<-merge(Reac$pcaMod, paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath))
+
             #      )
             if (input$addBox==TRUE){
 
@@ -351,12 +356,12 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         }
 
         if (input$dataType=='epiCounts'){
-            # pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'),
-            #                            input$binTableM),
-            #                   paste0 ( pointin(wdPath,'Epi'),
-            #                            input$bedLoadPath)
-            #                   , pcaMod, columnName=input$name,
-            #                   add=input$addBox )
+             pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'),
+                                        input$binTableM),
+                               paste0 ( pointin(wdPath,'Epi'),
+                                        input$bedLoadPath)
+                               , pcaMod, columnName=input$name,
+                               add=input$addBox )
         }
 
 

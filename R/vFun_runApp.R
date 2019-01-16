@@ -14,6 +14,7 @@ HiCeekR<-function (configFilePath=getwd()){
 
     #configFilePath="./HCR.config"
     setwd(configFilePath)
+    print (paste0("main wd:", getwd()))
     ####shiny::runApp(appDir="R/")
     # if (file.exists(configFilePath)==TRUE){
     # workingDir<-as.character((read.table(configFilePath))[1,1])

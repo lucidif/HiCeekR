@@ -68,6 +68,18 @@ networksV2_Visualization_UI <- function(id, label = "Visualization") {
                         )
                     )
 
+                    #=================4,5 Row
+                    ,shiny::fluidRow(
+                        shiny::column(2, br(),
+                                      shiny::helpText('Expression data (facultaty)')
+                        ),
+                        shiny::column(8,
+                                      shiny::fileInput(netv2NS('exprFiles'),
+                                                       label="select tsv files",
+                                                       multiple=TRUE
+                                                       )
+                        )
+                    )
                     #===============FIFTH ROW
                      ,shiny::fluidRow(
 
@@ -820,6 +832,7 @@ networksV2_Visualization_Server <- function(input, output,
             #regiTest<<-regi
 
             if (length(regi[,1])>=1){
+                print("regi[,1])>=1")
                 colnames (regi)<- c('bin','start','end','geneName', 'ensembl')
                 binInt<-nodes[i]
 
@@ -831,12 +844,14 @@ networksV2_Visualization_Server <- function(input, output,
                     regi<-rbind(regiPre,regi)
                 }
             } else {
+                print("regi[,1])<=1")
                 ##qui devi agiungere la possibilità che non ci siano risultati anche al primo colpo
                 ##il punto è che se non trova regioni al primo ciclo, quello entra qui e si ritrova senza niente!
                 ## con questo if sembra risolto, c'è ancora un problema tipo se arriva alla fine e non trova regioni geniche?
                 ## dovrebbe fare lo stesso errore che prima faceva al primo ciclo
                 ## if (n==leno){non fare niente } else { ci metti l'if i==n }
                 if (exists('regiPre')==TRUE){
+                    print("exists('regiPre')==TRUE")
                     regi<-regiPre
                 }
 
@@ -846,8 +861,7 @@ networksV2_Visualization_Server <- function(input, output,
 
         }
 
-        #print (regi)
-
+        print (regi)
         uniqueBin<- unique (regi[,1])
 
 
@@ -859,17 +873,80 @@ networksV2_Visualization_Server <- function(input, output,
         #regi[,5]<- rep (paste0("<a href=","'http://www.genecards.org/cgi-bin/carddisp.pl?gene=", regi[,4] ,"'>", "'http://www.genecards.org/cgi-bin/carddisp.pl?gene=", regi[,4],"</a>" ))
         regiNLcol4=regi[,4]
         regiNLcol5=regi[,5]
+
         #regiTT<<-regi
+
+        print("expression files check")
+        if(length(input$exprFiles$datapath)>0){
+            print("length(input$exprFiles$datapath)>0")
+            #exprfileSelect<<-input$exprFiles$datapath
+            exprTable<-matrix(nrow=length(regi[,5]),ncol=length(input$expFiles$dataPath))
+            rownames(exprTable)<-regi[,5]
+            #exprTable<-read.table(input$expFiles$datapath, sep=)
+            print("for ix in 1:length(input$exprFiles$datapath)")
+            print (input$exprFiles$datapath)
+            for(ix in 1:length(input$exprFiles$datapath) ){
+                if (ix!=1){impTab2<-impTab}
+                print(paste0("ix:",ix,"/",length(input$exprFiles$datapath)))
+                impTab<-read.table(input$exprFiles$datapath[ix], header=FALSE, sep="\t")
+                nam<-input$exprFiles$name[ix]
+                #nmTT<<-nam
+                print(paste0("file name:",nam))
+                #check name univocity
+                if (length(unique(as.character(impTab[,1])))!=length(impTab[,1])){
+                    print("no unique names in exprTable")
+                    geterrmessage("no unique names in exprTable")
+                    stop()
+                }
+                rownames(impTab)<-impTab[,1]
+                colnames(impTab)<-c("ensembl",nam)
+                missGenes<-regi[which(!(regi[,5] %in% impTab[,1])),5]
+                if (length(missGenes)!=0){
+                    missValue<-rep(NA,length(missGenes))
+                    miss<-data.frame(missGenes,missValue)
+                    rownames(miss)<-miss[,1]
+                    colnames(miss)<-colnames(impTab)
+                    impTab<-rbind(impTab,miss)
+                }
+
+                if (ix!=1){
+                    #impTab<-cbind(impTab,c(rep("NA",length(impTab[,1]))))
+                    #impTab2<-impTab
+                    missGenes<-which(!(regi[,5] %in% impTab[,1]))
+                    #impTab<-cbind(impTab2,impTab)
+                    impTab<-merge(impTab2,impTab,by="ensembl")
+                }
+            }
+            #regiTT<<-regi
+            #merge(regi,impTab,by=)
+            #impTabTT<<-impTab
+        } else {
+            print("no expr files selected")
+            #exprfileSelect<<-"none"
+        }
+        regi<-merge(regi,impTab,by="ensembl")
+
         regi[,4]<- rep(paste0("<a href=","'http://www.genecards.org/cgi-bin/carddisp.pl?gene=", regi[,4], "'>", regi[,4],"</a>" ))
         regi[,5]<- rep(paste0("<a href=","'http://www.ensembl.org/Multi/Search/Results?q=", regi[,5], "'>", regi[,5],"</a>" ))
         savedValue$regiSave<-regi
+        print("genes table link exported")
+        regiNL<-regi
 
-        regiNL= regi
-        regiNL[,4]=regiNLcol4
-        regiNL[,5]=regiNLcol5
+        #regiNLTT<<-regi
+        #regiNLcol4TT<<-regiNLcol4
+        #regiNLcol5TT<<-regiNLcol5
+
+        regiNL[,4]<-regiNLcol4
+        regiNL[,5]<-regiNLcol5
+        print("export regions NL table")
         savedValue$regiNLsave=regiNL
 
         regi<- as.data.frame (regi)
+        print ("export Regions table data frame")
+        #regiNL<<-regiNL
+
+        #addExpr IF present
+
 
         #modifica results aggiungengo i geneName presi da regi:
 

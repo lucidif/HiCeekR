@@ -12,6 +12,7 @@ moduleStartPanel <- function(mainNavItem, wdPath, moduleDescription){
 
     #mainNavItem: "Filtering"; "Binning"; "iterative"; "WavSis" ; "TADsHMM"
 
+
     dependency<-FALSE
 
     if (mainNavItem=="Filtering"){
@@ -165,8 +166,7 @@ moduleStartPanel <- function(mainNavItem, wdPath, moduleDescription){
                                         shiny::column(3),
                                         shiny::column(3,
                                             shiny::actionButton(paste0(mainNavItem,"_reStart"),
-                                                                    label=paste0(mainNavItem,
-                                                                                 "Re-Start"))
+                                                                    label="Re-Start")
                                             # shiny::actionButton("restart",
                                             #                         label=paste0(mainNavItem,
                                             #                                      "Re-Start"))
@@ -267,7 +267,7 @@ moduleStartPanel <- function(mainNavItem, wdPath, moduleDescription){
 #' @examples
 moduleStartPanel2<-function(){
     return(
-        shiny::wellPanel("do you want to start this Step?",
+        shiny::wellPanel("do you want start this Step?",
                          shiny::fluidRow(
                              shiny::column(3),
                              shiny::column(3,

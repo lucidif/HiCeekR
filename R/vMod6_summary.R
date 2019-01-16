@@ -89,6 +89,8 @@ sum_UI<-function(id, label="summary"){
 #' @examples
 sum_Server<-function(input, output, session, stringsAsFactors,
                     wdPath){
+    print(pointin(wdPath, "tmpimg", sys=TRUE))
+    #addResourcePath("images",pointin(wdPath, "tmpimg", sys=TRUE))
 
     #prjNameSlot anNameSlot intySlot inpaSlot otherComSlot resoSlot
 
@@ -118,14 +120,23 @@ sum_Server<-function(input, output, session, stringsAsFactors,
                            ,"h5file_bamMatching_report"))==TRUE){
         # addResourcePath("plt", pointin(wdPath, "Pre-Processing", sys=TRUE)
         #                                          )
+        #addResourcePath("images","/media/lucio/data/1.Bioinformatic/1.heavyWD/1.R/test4/HiCeekRwd/Projects/testCompleteDataset/completeBAM1/SysOut/tmpimg")
         #print (paste0(pointin(wdPath, "Pre-Processing", sys=TRUE),"fragments.jpeg"))
         file.copy(from=paste0(pointin(wdPath, "Pre-Processing", sys=TRUE),"fragments.jpeg"),
-                  to=paste0(getwd(),"/www")
+                  system.file("www",package="HiCeekR")
+                  #to=paste0(getwd(),"/www")
                   )
+        # file.copy(from=paste0(pointin(wdPath, "Pre-Processing", sys=TRUE),"fragments.jpeg"),
+        #           to=paste0(pointin(wdPath, "tmpimg", sys=TRUE),"fragments.jpeg")
+        # )
 
         file.copy(from=paste0(pointin(wdPath, "Pre-Processing", sys=TRUE),"inOutWard.jpeg"),
-                  to=paste0(getwd(),"/www")
+                  #to=paste0(getwd(),"/www")
+                  to=system.file("www",package="HiCeekR")
         )
+        # file.copy(from=paste0(pointin(wdPath, "Pre-Processing", sys=TRUE),"inOutWard.jpeg"),
+        #           to=paste0(pointin(wdPath, "tmpimg", sys=TRUE),"inOutWard.jpeg")
+        # )
 
         #print (paste0(getwd(),"/www"))
         output$preImage<-shiny::renderImage({

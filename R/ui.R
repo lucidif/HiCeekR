@@ -91,8 +91,8 @@ obtainWd <- function (){
 
 }
 
-ui<-shiny::shinyUI (
 
+ui<-shiny::shinyUI (
 
 
     shiny::div ( id="mainApp",
@@ -400,6 +400,31 @@ ui<-shiny::shinyUI (
                                 )
                                 #)
         ),
+#========================conditionalPanel MULTIPLE
+shiny::conditionalPanel(condition="input.inputType=='Multiple'
+                                        && output.prjState=='Project Selected'
+                                        && input.loadNewAn=='new'",
+
+                        shiny::wellPanel(
+
+                            shiny::fluidRow(
+                                shiny::column(2, shiny::br(),
+                                        shiny::helpText("select projects:")
+                                       ),
+                                shiny::column(10,
+                                        # shiny::checkboxGroupInput("prjSelector",
+                                        #         label="",
+                                        #         choices=list.dirs(path=getwd())
+                                        #                         )
+                                        shiny::uiOutput("multipleSlot")
+
+                                            )
+                            )
+
+                        )
+
+                        ),
+
 
 #========================conditionalPanel(condition="input.inputType=='Matrix'"
 #====

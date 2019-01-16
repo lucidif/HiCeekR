@@ -141,7 +141,7 @@ prjSettings_Server <- function(input, output, session, prjManExport){
     shiny::observeEvent(input$prjButton,{
         if(input$loadNewPrj == "new"){
             pName<-input$prjNewName
-        }else{4
+        }else{
             pName<-input$prjLoadName
         }
         rea$anFolder<-paste0(workingDir, pName, "/")
@@ -538,6 +538,7 @@ prjSettings_Server <- function(input, output, session, prjManExport){
 
     shiny::observeEvent(input$prjButton,{
             if (input$loadNewPrj == "new"){
+                print(paste0("make new prj: ",paste0(workingDir,"Projects/")))
                 makeHCRprj(input$prjNewName, paste0(workingDir,"Projects/"))
                 prjManExport$prjFolder <- paste0(workingDir,"Projects/",
                                                 input$prjNewName, "/"
