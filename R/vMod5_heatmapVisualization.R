@@ -300,6 +300,8 @@ TADsV2_Visualization_Server <- function(input, output, session,
                                         stringsAsFactors, wdPath) {
 
 print("htm module start")
+library(plotly)
+
 #===========================
     # library(shiny)
     # library(data.table)
@@ -588,7 +590,7 @@ print("htm module start")
             )
 
             #p<-plot_ly (datoplo, x=datoplo[,1], y=datoplo[,2] , type='bar' )
-            slot1<-plot_ly (datoplo, y=datoplo[,2], text=maNames,
+            slot1<-plotly::plot_ly (datoplo, y=datoplo[,2], text=maNames,
                             hoverinfo='y+text' , type='bar' ) %>% layout(
                                 yaxis = list (title=input$selCol))
             #output$plotSlot<-plotly::renderPlotly({plotly::subplot (q, p, nrows=2, shareX=TRUE)})
@@ -614,7 +616,7 @@ print("htm module start")
             colnames(slot2table)<-c('regions',input$selCol_slot2)
             slot2table<-slot2table[-1,]
             print (ticksX)
-            slot2<-plot_ly(datoplo,
+            slot2<-plotly::plot_ly(datoplo,
                             y=datoplo[,2],
                             text=maNames ,
                             hoverinfo='y+text' ,
@@ -645,7 +647,7 @@ print("htm module start")
             slot3table<-slot3table[-1,]
 
             print (ticksX)
-            slot3<-plot_ly(datoplo, y=datoplo[,2], text=maNames,
+            slot3<-plotly::plot_ly(datoplo, y=datoplo[,2], text=maNames,
                             hoverinfo='y+text' , type='bar' )  %>% layout(
                                 yaxis = list (title=input$selCol_slot3))
         }
@@ -671,7 +673,7 @@ print("htm module start")
             slot4table<-slot4table[-1,]
 
             print (ticksX)
-            slot4<-plot_ly (datoplo, y=datoplo[,2], text=maNames,
+            slot4<-plotly::plot_ly (datoplo, y=datoplo[,2], text=maNames,
                             hoverinfo='y+text' , type='bar' ) %>% layout(
                                 yaxis = list (title=input$selCol_slot4))
             print ('slot4 plot ok')
@@ -698,7 +700,7 @@ print("htm module start")
             slot5table<-slot5table[-1,]
 
             print (ticksX)
-            slot5<-plot_ly (datoplo, y=datoplo[,2], text=maNames,
+            slot5<-plotly::plot_ly (datoplo, y=datoplo[,2], text=maNames,
                             hoverinfo='y+text' , type='bar' ) %>% layout(
                                 yaxis = list (title=input$selCol_slot5))
             print ('slot5 plot ok')
@@ -1076,7 +1078,7 @@ print("htm module start")
 
         tabPath<- input$fileInput_slot1$datapath
         tab<-HCRread (file='', path=tabPath)
-        tabTT<<-tab
+        #tabTT<<-tab
         colu<- colnames (tab)
 
         output$pos_slot1<- renderUI ({

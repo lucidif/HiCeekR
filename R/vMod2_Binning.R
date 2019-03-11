@@ -44,21 +44,21 @@ DiffHiC_BinningV2_UI <- function(id, label = "binning") {
                         shiny::wellPanel(
 
 
-                            shiny::fluidRow(
-
-                                shiny::column(6,
-                                    shiny::numericInput (binns('filterValue'),
-                                                        label='min frags number'
-                                                        ,value = 1)
-                            ),
-
-                                shiny::column(6,
-                                    shiny::checkboxInput(binns("filtered"),
-                                                        "filtered data",
-                                                        value=TRUE)
-                                )
-
-                            ),
+                            # shiny::fluidRow(
+                            #
+                            # #     shiny::column(6,
+                            # #         shiny::numericInput (binns('filterValue'),
+                            # #                             label='min frags number'
+                            # #                             ,value = 1)
+                            # # ),
+                            #
+                            #     # shiny::column(6,
+                            #     #     shiny::checkboxInput(binns("filtered"),
+                            #     #                         "filtered data",
+                            #     #                         value=TRUE)
+                            #     # )
+                            #
+                            # ),
 
                         shiny::uiOutput(binns('refgenFrag')),
 
@@ -142,6 +142,9 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
 
 
     shiny::observeEvent(input$startbut,{
+        filtered<-TRUE
+        #store run time
+        #runTime3<<-proc.time()
 
         busyIndServer("startbut",{
 
@@ -149,7 +152,8 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
 
         #h5file<<-input$h5
 
-        if (input$filtered == TRUE){
+        #if (input$filtered == TRUE){
+        if (filtered == TRUE){
             binSaved$h5file<-paste0(pointin(wdPath,"Filtering", sys=TRUE),
                                     "trimmed.h5")
             #binSaved$h5file<-"trimmed.h5"
@@ -191,7 +195,9 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
                                         binSaved$h5file,
                                         binSaved$paramFil,
                                         width=binSaved$bin.size,
-                                        filter=input$filterValue)
+                                        #filter=input$filterValue
+                                        filter=1
+                                        )
 
         print ('squareCounts.....OK')
         intSet<-binSaved$redata
@@ -281,16 +287,40 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
         #saveParameters
         binningTable<-matrix(ncol=1,nrow=2)
         rownames(binningTable)<-c("minFragNumber","dataType")
-        if (input$filtered==TRUE){
+        #if (input$filtered==TRUE){
+        if (filtered==TRUE){
             dtype<-"filtered"
         } else {
             dtype<-"noFilter"
         }
-        binningTable[,1]<-c(input$filterValue,dtype)
+        #binningTable[,1]<-c(input$filterValue,dtype)
+        binningTable[,1]<-c(1,dtype)
         write.table(binningTable, paste0(pointin(wdPath, "Binning", sys=TRUE),"parameter.tsv"),
                     sep="\t", quote=FALSE, col.names=FALSE)
 
+        HCRwrite (InteractionSet::regions(binSaved$redata),
+                  file='allRegions.bint.bed' ,
+                  path=pointin(wdPath, 'Binning', sys=FALSE),
+                  col.names=FALSE,
+                  extension=FALSE )
+        HCRwrite (InteractionSet::regions(binSaved$redata),
+                  file='allRegions.bint.bed' ,
+                  path=pointin(wdPath, 'Binning', sys=TRUE),
+                  col.names=FALSE,
+                  extension=FALSE )
 
+        # filename <- paste0(input$chrInt1Box,'_',input$chrInt2Box,'.bint.bed')
+        # reframe<- as.data.frame (InteractionSet::regions( binSaved$redata))
+        # reframe<- subset (reframe, reframe[[1]]==input$chrInt1Box
+        #                   | reframe[[1]]==input$chrInt2Box )
+        # HCRwrite (reframe, file=filename,
+        #           path=pointin(wdPath,'Binning'),
+        #           append=FALSE , col.names=FALSE, extension=FALSE )
+        #print (paste0(filename,'.....SAVED'))
+
+
+        #run time end
+        #runTime3<<-proc.time()-runTime3
 
     })
 
@@ -383,7 +413,7 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
         #not Selectable results==============================================
         HCRwrite (InteractionSet::regions(binSaved$redata),
                   file='allRegions.bint.bed' ,
-                  path=pointin(wdPath, 'Binning', sys=TRUE),
+                  path=pointin(wdPath, 'Binning', sys=FALSE),
                   col.names=FALSE,
                   extension=FALSE )
         HCRwrite (InteractionSet::regions(binSaved$redata),

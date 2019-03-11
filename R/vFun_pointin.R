@@ -87,9 +87,13 @@ pointin<- function(analysisFolder, specificFolderName , sys=FALSE){
 
     if (specificFolderName == "PCA"){
         mafoDown<-"Downstream/"
+        # poi<-paste0(zl, projectName, "/", analysisName, "/",
+        #             beforePath, mafoDown, specificFolderName,"/"
+        # )
         poi<-paste0(zl, projectName, "/", analysisName, "/",
-                    beforePath, mafoDown, specificFolderName,"/"
+                    beforePath, mafoDown, "/"
         )
+
         exSw<-TRUE
 
     }

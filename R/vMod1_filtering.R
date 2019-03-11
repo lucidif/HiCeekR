@@ -417,7 +417,9 @@ FilmodServer <- function(input, output, session,
     observeEvent(input$filBut,{
 
         busyIndServer("filBut",{
-
+            #store run time
+            runTime2<<-proc.time()
+            #print(runTime2)
             shiny::withProgress("filtering start", min=0, max=13 , {
                 shiny::setProgress(message = 'Filtering in progress',
                                    detail = 'This may take a while...')
@@ -553,7 +555,8 @@ FilmodServer <- function(input, output, session,
 
 
                 setProgress(value = 13)
-
+                #run time end
+                runTime2<<-proc.time()-runTime2
             })
 
 

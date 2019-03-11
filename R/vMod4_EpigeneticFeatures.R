@@ -9,7 +9,7 @@
 #' @keywords internal
 #'
 #' @examples
-pca_postProcessing_UI <- function (id, label='epiFea' ){
+EpigeneticFeatures_UI <- function (id, label='epiFea' ){
     pcaNS<- shiny::NS (id)
 
     shiny::fluidPage(
@@ -17,7 +17,7 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
 
         shiny::tabsetPanel ( #pcaNS('tabSetPCA'),
 
-            shiny::tabPanel( 'prepare PCA'
+            shiny::tabPanel( 'EpigeneticFeatures'
 
                 ,shiny::wellPanel (
 
@@ -83,45 +83,45 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
                                 )
                       )
 
-            ,shiny::tabPanel ('PCA'
-
-                            ,shiny::wellPanel (
-
-                                 shiny::fluidRow (
-
-                                     shiny::column (10,
-
-                                                #fileInput (pcaNS ('pcaTableLoaded'), 'pca table')
-                                                #selectFile (pcaNS('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'pca table', subset=TRUE, pattern='.epiCounts.tsv')
-                                            shiny::uiOutput (pcaNS('pcaTableSlot'))
-                                        ),
-
-                                     shiny::column (2, shiny::br(),
-
-                                        shiny::actionButton (pcaNS('startPca'),
-                                                             'start PCA')
-
-                                        )
-
-                                    ),
-
-
-                                 shiny::fluidRow(
-
-                                     shiny::column (12, plotOutput(pcaNS('pcaPlot')) )
-
-                                    ),
-
-                                 shiny::fluidRow (
-
-                                     shiny::column (12,
-                                        shiny::uiOutput(pcaNS('selectPCui')) )
-
-                                    )
-
-                                )
-
-                      )
+            # ,shiny::tabPanel ('PCA'
+            #
+            #                 ,shiny::wellPanel (
+            #
+            #                      shiny::fluidRow (
+            #
+            #                          shiny::column (10,
+            #
+            #                                     #fileInput (pcaNS ('pcaTableLoaded'), 'pca table')
+            #                                     #selectFile (pcaNS('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'pca table', subset=TRUE, pattern='.epiCounts.tsv')
+            #                                 shiny::uiOutput (pcaNS('pcaTableSlot'))
+            #                             ),
+            #
+            #                          shiny::column (2, shiny::br(),
+            #
+            #                             shiny::actionButton (pcaNS('startPca'),
+            #                                                  'start PCA')
+            #
+            #                             )
+            #
+            #                         ),
+            #
+            #
+            #                      shiny::fluidRow(
+            #
+            #                          shiny::column (12, plotOutput(pcaNS('pcaPlot')) )
+            #
+            #                         ),
+            #
+            #                      shiny::fluidRow (
+            #
+            #                          shiny::column (12,
+            #                             shiny::uiOutput(pcaNS('selectPCui')) )
+            #
+            #                         )
+            #
+            #                     )
+            #
+            #           )
 
         )
 
@@ -141,7 +141,7 @@ pca_postProcessing_UI <- function (id, label='epiFea' ){
 #' @keywords internal
 #'
 #' @examples
-pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
+EpigeneticFeatures_Server <- function (input, output, session, stringsAsFactors,
                                     wdPath
                                     ){
     print ("start PCA module")
@@ -155,16 +155,17 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
     print ("pcaTabSlot render")
     output$pcaTableSlot<- shiny::renderUI ({
-        selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'.hkr.pca file', subset=TRUE, pattern='.hkr.pca')
+        #selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'.hkr.pca file', subset=TRUE, pattern='.hkr.pca')
+        shiny::fileInput(pcaNServer('pcaTableLoaded'), label="pca file")
     })
 
     print ("start observer")
-    shiny::observeEvent(input$bedLoadPath,{
-        print("bedLoadPath")
-        print (input$bedLoadPath)
-        if ( input$bedLoadPath!="please select file"){
-            print(paste0("EpiPath:",pointin(wdPath,'Epi'),input$bedLoadPath))
-            #Reac$bedTab<-read.table(paste0(pointin(wdPath,'Epi'),input$bedLoadPath), sep="\t")
+    shiny::observeEvent(input$bamLoadPath,{
+        print("bamLoadPath")
+        print (input$bamLoadPath)
+        if ( input$bamLoadPath!="please select file"){
+            print(paste0("EpiPath:",pointin(wdPath,'Epi'),input$bamLoadPath))
+            #Reac$bedTab<-read.table(paste0(pointin(wdPath,'Epi'),input$bamLoadPath), sep="\t")
             #rownames(Reac$bedTab)<-rep(paste0(Reac$bedTab[,1],":",Reac$bedTab[,2],"-",Reac$bedTab[,3]))
             #Reac$bedTab<-Reac$bedTab[,-c(1:4)]
             # output$colSelectorSlot<-shiny::renderUI({
@@ -256,11 +257,11 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                 shiny::fluidRow(
 
                     shiny::column (5, shiny::br(), # esce quando selezioni bin table bin table
-                            #textInput(pcaNServer('bedLoadPath'), label='bam file path')
+                            #textInput(pcaNServer('bamLoadPath'), label='bam file path')
                             # 3=================================================
-                            selectFile (pcaNServer('bedLoadPath'),
+                            selectFile (pcaNServer('bamLoadPath'),
                                         path=pointin (wdPath,'Epi') ,
-                                        label='bed file path',
+                                        label='bam file path',
                                         pattern=".bed"
                                         )
                     ),
@@ -335,16 +336,16 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
              pcaTable<-bamPca(paste0 ( pointin(wdPath,'Binning'),
                                         input$binTable),
                                paste0 ( pointin(wdPath,'Epi'),
-                                        input$bedLoadPath)
+                                        input$bamLoadPath)
                                , Reac$pcaMod, columnName=input$name, add=input$addBox )
-            print (paste0(pointin(wdPath,'Epi'),input$bedLoadPath))
+            print (paste0(pointin(wdPath,'Epi'),input$bamLoadPath))
              # bedLoad<-read.table(paste0 ( pointin(wdPath,'Epi'),
-             #                                 input$bedLoadPath),
+             #                                 input$bamLoadPath),
              #                     sep="\t"
              #                     )
             #bedLoadTT<<-bedLoad
 
-            #tabTT<<-merge(Reac$pcaMod, paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath))
+            #tabTT<<-merge(Reac$pcaMod, paste0 ( pointin(wdPath,'Epi'), input$bamLoadPath))
 
             #      )
             if (input$addBox==TRUE){
@@ -359,13 +360,13 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
              pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'),
                                         input$binTableM),
                                paste0 ( pointin(wdPath,'Epi'),
-                                        input$bedLoadPath)
+                                        input$bamLoadPath)
                                , pcaMod, columnName=input$name,
                                add=input$addBox )
         }
 
 
-        # pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'), input$binTable), paste0 ( pointin(wdPath,'Epi'), input$bedLoadPath)
+        # pcaTable<-bamPca (paste0 ( pointin(wdPath,'Binning'), input$binTable), paste0 ( pointin(wdPath,'Epi'), input$bamLoadPath)
         #                    , pcaMod, columnName=input$name, add=input$addBox )
 
         print ('bamPca.....OK')
@@ -406,9 +407,9 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                 shiny::fluidRow(
 
                     shiny::column (5,
-                            #textInput(pcaNServer('bedLoadPath'), label='bam file path')
+                            #textInput(pcaNServer('bamLoadPath'), label='bam file path')
                             # 4 =======================================
-                            selectFile (pcaNServer('bedLoadPath'),
+                            selectFile (pcaNServer('bamLoadPath'),
                                         path=pointin (wdPath,'Epi') ,
                                         label='bad file path',
                                         pattern=".bed"
@@ -494,11 +495,16 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         Reac$A_pcaMod<-Reac$pcaMod
         HCRwrite (Reac$pcaMod, nameToAssign , path=pointin(wdPath, 'PCA') ,  quote=FALSE )
         output$pcaTableSlot<- shiny::renderUI ({
-            selectFile (pcaNServer('pcaTableLoaded'),
-                        path=pointin(wdPath, 'PCA') ,
-                        'pca table',
-                        subset=TRUE,
-                        pattern='.epiCounts.tsv')
+            # selectFile (pcaNServer('pcaTableLoaded'),
+            #             path=pointin(wdPath, 'PCA') ,
+            #             'pca table',
+            #             subset=TRUE,
+            #             pattern='.epiCounts.tsv')
+            shiny::fileInput(pcaNServer('pcaTableLoaded'),
+                             lebel="pca table"
+                               )
+
+
         })
         print ('table export SUCCESS')
 
@@ -507,10 +513,13 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
     shiny::observeEvent(input$startPca,{
 
         print ('.....start pca.....')
-        pcaTable3<- read.table (paste0 (pointin(wdPath,'PCA'),
-                                        input$pcaTableLoaded),
-                                sep='\t',
-                                header=TRUE)
+        # pcaTable3<- read.table (paste0 (pointin(wdPath,'PCA'),
+        #                                 #input$pcaTableLoaded
+        #                                 input$pcaTableLoaded$datapa
+        #                                 ),
+        #                         sep='\t',
+        #                         header=TRUE)
+        pcaTable3<- read.table (input$pcaTableLoaded$datapath, sep='\t', header=TRUE)
         columnsNames<- pcaTable3[,1]
         pcaTable3<- pcaTable3[,-1]
         #View (pcaTable3)

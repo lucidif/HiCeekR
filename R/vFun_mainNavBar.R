@@ -56,9 +56,9 @@ mainNav<-function(inType="BAM"){
                                                      shiny::uiOutput ('pcaSlot')
                                             ),
 
-                                    # shiny::tabPanel ('CompartmentsPCA',
-                                    #             shiny::uiOutput ('pcaCompSlot')
-                                    #             ),
+                                    shiny::tabPanel ('EpigeneticFeatures',
+                                                     shiny::uiOutput ('bacovSlot')
+                                    ),
 
                                     shiny::tabPanel ('TADsHMM',
                                                 shiny::uiOutput ('hmmSlot')
@@ -179,9 +179,9 @@ mainNav<-function(inType="BAM"){
                                                                  shiny::uiOutput ('pcaSlot')
                                                 ),
 
-                                                # shiny::tabPanel ('CompartmentsPCA',
-                                                #             shiny::uiOutput ('pcaCompSlot')
-                                                #             ),
+                                                shiny::tabPanel ('BAMcoverage',
+                                                             shiny::uiOutput ('feCountsSlot')
+                                                             ),
 
                                                 shiny::tabPanel ('TADsHMM',
                                                                  shiny::uiOutput ('hmmSlot')

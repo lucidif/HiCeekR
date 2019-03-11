@@ -117,18 +117,20 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
 
     shiny::observeEvent(input$startBut,{
 
-        filne<-paste0(input$fileName,'.DI.tsv')
-        filpath<-pointin (wdPath,'Post-Processing')
+        filne<-paste0(input$fileName,'.DI')
+        filpath<-pointin (wdPath,'Downstream')
         refpath<-paste0(pointin(wdPath,'Pre-Processing', sys=TRUE),"refGenFrag.cutGenome.tsv") #cutgenome
         h5path<- paste0(pointin(wdPath,'Filtering', sys=TRUE),"trimmed.h5")  #h5
         #non crei il bint.bed da nessuna parte, ma ti serve
-        #bintabpath<- paste0(pointin(wdPath,'Binning', sys=TRUE),input$binTabInput) #bint.bed
+        bintabpath<- paste0(pointin(wdPath,'Binning', sys=TRUE),"allRegions.bint.bed") #bint.bed
 
 
 
-        binsize<- as.numeric(HCRread('',paste0(wdPath, 'info.tsv'))[1])
+        #binsize<- as.numeric(HCRread('',paste0(wdPath, 'info.tsv'))[1])
+        binsize<-HCRread(file='info.tsv', path=wdPath, header=FALSE)[2,2]
 
         resu<-hmmDI(fileOutName=filne, outputPath=filpath, refFragsPATH=refpath, h5PATH=h5path, bintablePath=bintabpath, bin.size=binsize)
+        print ("hmm indices finded")
         #reportTxt<-paste0(filepath,filne)
         output$fileRep<- renderText({
             paste0(filpath,filne)

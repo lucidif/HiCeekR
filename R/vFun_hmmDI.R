@@ -14,14 +14,20 @@
 hmmDI<- function (fileOutName, outputPath, refFragsPATH, h5PATH, bintablePath, bin.size){
     rFrags<-read.table (refFragsPATH, sep='\t', header=TRUE)
     binTab<-read.table (bintablePath, sep='\t', header=FALSE)
-    rFragsGrange<-makeGRangesFromDataFrame(rFrags)
-    paramFil <- pairParam(rFragsGrange)
+    rFragsGrange<-GenomicRanges::makeGRangesFromDataFrame(rFrags)
+    print("star pairparam")
+    paramFil <- diffHic::pairParam(rFragsGrange)
+    print("end pairparam")
 
-
-
+    #h5PATH<<-h5PATH
+    #paramFil<<-paramFil
+    #bin.size<<-bin.size
     finder <- diffHic::domainDirections(h5PATH, paramFil, width=bin.size, span=10)
 
-    all.counts <- cbind(assay(finder, "up"), assay(finder, "down"))
+    print("finded domains")
+
+    all.counts <- cbind(SummarizedExperiment::assay(finder, "up"),
+                        SummarizedExperiment::assay(finder, "down"))
     DI<-matrix(ncol=2,nrow=length(all.counts[,1]))
     DI[,1]<-c(1:length(all.counts[,1]))
     colnames(DI)<-c('bin','value')
@@ -42,7 +48,7 @@ hmmDI<- function (fileOutName, outputPath, refFragsPATH, h5PATH, bintablePath, b
     DI[,1]<-binNames[,1]
 
 
-
+    print("wrote HMM results")
     HCRwrite (DI, fileOutName, path=outputPath , quote=FALSE, col.names=TRUE, row.names=TRUE)
 
     return(DI)

@@ -300,6 +300,9 @@ diffHic_Normalization_Server <- function(input, output, session,
 
     observeEvent (input$rdButton ,{
 
+        #store run time
+        #runTime4<<-proc.time()
+
         #load (file=paste0(pointin(anFolder$hisave,'Binning'),input$rdLoad))
         #load always specific file
         # load( file=paste0(pointin(wdPath, "Binning", sys=TRUE), "intSet.Robj"))
@@ -475,7 +478,7 @@ diffHic_Normalization_Server <- function(input, output, session,
         #    #write.table (NormMatrix, file='test_NormMatrix.tsv', sep='\t')
         #    HCRwrite (NormMatrix, file=norMaFilename, path=pointin(anFolder$hisave,'Normalization'), row.names=TRUE)
         ##########################################################################################
-
+        #runTime4<<-proc.time()-runTime4
     })
 
     observeEvent (input$expBut,{
@@ -837,7 +840,7 @@ diffHic_Normalization_Server <- function(input, output, session,
         #rFrags<-read.table (refPosition, sep='\t', header=TRUE)
         rFrags<-read.table (refPosition, sep='\t', header=TRUE)
         #View (rFrags)
-        rFragsGrange<-makeGRangesFromDataFrame(rFrags)
+        rFragsGrange<-GenomicRanges::makeGRangesFromDataFrame(rFrags)
         saveMe$paramFil <- pairParam(rFragsGrange)
         #print (paramFil$hisave)
         print('param importato')

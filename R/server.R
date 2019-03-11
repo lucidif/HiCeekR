@@ -1,4 +1,4 @@
-options(shiny.maxRequestSize=300*1024^2,stringsAsFactors = FALSE)
+options(shiny.maxRequestSize=700*1024^2,stringsAsFactors = FALSE)
 #shiny::addResourcePath("www", "./www")
 
 #R.home
@@ -597,8 +597,8 @@ shiny::observeEvent(input$newMultiAnalysis,{
 })
 
 shiny::observeEvent(input$newAnalysis,{
-
-
+    #store run time
+    #runTime1<<-proc.time()
     busyIndServer("newAnalysis",{
         if (input$loadNewPrj=="new"){
             prjName<-input$prjNewName
@@ -772,9 +772,12 @@ shiny::observeEvent(input$newAnalysis,{
 
         } else {
 
-            # if (input$inputType == "Multiple"){
-            #     print("make multiple analysis")
-            # }
+            if (input$inputType == "Multiple"){
+                print("make multiple analysis")
+
+                #controls
+
+            }
 
         }
 
@@ -782,6 +785,8 @@ shiny::observeEvent(input$newAnalysis,{
 
     })
 
+    #run time end
+    #runTime1<<-proc.time()-runTime1
 })
 
 #====================================================Initizialize Module Selection Panels
@@ -1185,7 +1190,7 @@ shiny::observeEvent(input$Networks_start,{
             })
         }
 
-        if (input$mainNav == 'PCA' &
+        if (input$mainNav == 'EpigeneticFeatures' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
             output$moduleScreen<-shiny::renderUI({})
             output$selectPn<-shiny::renderUI({})
@@ -1194,6 +1199,19 @@ shiny::observeEvent(input$Networks_start,{
                                                                 rea$anDir,
                                                                 callModuleDescription(
                                                                 "EpigeneticFeatures")
+            )
+            })
+        }
+
+        if (input$mainNav == 'PCA' &
+            file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
+            #output$pcaSlot<-shiny::renderUI({moduleStartPanel("EpigeneticFeatures",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("CompartmentsPCA",
+                                                               rea$anDir,
+                                                               callModuleDescription(
+                                                                   "CompartmentsPCA")
             )
             })
         }
@@ -1398,6 +1416,41 @@ shiny::observeEvent(input$Networks_start,{
                                                           wdPath=rea$anDir)
                 }
 
+                #EpigeneticFeatures
+                if (input$mainNav == 'EpigeneticFeatures' & file.exists(paste0(
+                    rea$anDir, 'info.tsv'))==TRUE ){
+                    #source ('pcaComp_postProcessing.R')
+                    tool_pcaComp <- 'EpigeneticFeatures'
+                    moduleUI_pcaComp<- paste0 (tool_pcaComp, '_UI')
+                    moduleLoad_pcaComp<- paste0 (tool_pcaComp,'_Server')
+                    #output$pcaCompSlot<- shiny::renderUI({
+                    output$selectPn <-shiny::renderUI ({
+                        get(moduleUI_pcaComp) (tool_pcaComp,label='pcaUI')
+                    })
+                    loadApp_pcaComp <-  shiny::callModule(get(moduleLoad_pcaComp),
+                                                          tool_pcaComp,
+                                                          stringsAsFactors = FALSE,
+                                                          wdPath=rea$anDir)
+                }
+
+
+                if (input$mainNav == '' & file.exists(paste0(
+                    rea$anDir, 'info.tsv'))==TRUE ){
+                    #source ('pcaComp_postProcessing.R')
+                    tool_pcaComp <- 'pcaComp_postProcessing'
+                    moduleUI_pcaComp<- paste0 (tool_pcaComp, '_UI')
+                    moduleLoad_pcaComp<- paste0 (tool_pcaComp,'_Server')
+                    #output$pcaCompSlot<- shiny::renderUI({
+                    output$selectPn <-shiny::renderUI ({
+                        get(moduleUI_pcaComp) (tool_pcaComp,label='pcaUI')
+                    })
+                    loadApp_pcaComp <-  shiny::callModule(get(moduleLoad_pcaComp),
+                                                          tool_pcaComp,
+                                                          stringsAsFactors = FALSE,
+                                                          wdPath=rea$anDir)
+                }
+
+
                 if (input$mainNav == 'PCA' &
                     file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
                     #source ('pca_postProcessing.R')
@@ -1406,7 +1459,7 @@ shiny::observeEvent(input$Networks_start,{
                     moduleLoad_pca<- paste0 (tool_pca,'_Server')
                     #output$pcaSlot<-shiny::renderUI ({
                     output$selectPn <-shiny::renderUI ({
-                        get(moduleUI_pca) (tool_pca,label='epifUI')
+                        get(moduleUI_pca) (tool_pca,label='PCA')
                     })
                     loadApp_pca <- shiny::callModule(get(moduleLoad_pca), tool_pca,
                                                      stringsAsFactors = FALSE,

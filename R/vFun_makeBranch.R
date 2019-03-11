@@ -13,7 +13,7 @@ makeBranch<-function(branchName, pipelineStep, configFile="./HCR.config", infoTs
     #pipelineStep possibility: Binning, Downstream, Filtering, Normalization,
     #                           Pre-Processing, Report, Visualization
 
-    workingDir<-as.character((read.table(configFile))[1,1])
+    workingDir<-paste0(getwd(),as.character((read.table(configFile))[1,1]))
     it<-as.matrix(data.frame(read.table(infoTsv, sep="\t")))
 
     if (length(it[1,]==3)){
