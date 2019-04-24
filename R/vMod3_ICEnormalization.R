@@ -104,7 +104,7 @@ diffHic_Normalization_Server <- function(input, output, session,
     saveMe<-shiny::reactiveValues(firstV='none')
 
     output$rawFpSlot<-shiny::renderUI({
-        shiny::column(6, selectFile(diffHicNormNs('matrixPath'), path=pointin(wdPath, 'Binning') , subset=TRUE, pattern='.tsv'))
+        shiny::column(6, selectFile(diffHicNormNs('matrixPath'), path=pointin(wdPath, 'Binning') , subset=TRUE, pattern='_raw_matrix.tsv'))
     })
 
 

@@ -94,10 +94,12 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
                 shiny::column(12,
                     #shiny::textInput(hmmNs('fileName'),label=h5('select file name')))
                         selectFile(hmmNs('filePath'),
-                                path=pointin (wdPath, 'Binning') ,
+                                #path=pointin (wdPath, 'Binning') ,
+                                path=pointin (wdPath, 'Normalization') ,
                                 label='select binTable file',
                                 subset=TRUE,
-                                pattern='_raw_matrix.tsv'
+                                pattern='.tsv'
+                                #pattern='_raw_matrix.tsv'
                                 ))
 
             ),
@@ -127,7 +129,8 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
         #=======================================New Pipe
         require(HiTC)
 
-        intdata_path<-paste0 (pointin(wdPath,'Binning'),input$filePath)
+        #intdata_path<-paste0 (pointin(wdPath,'Binning'),input$filePath)
+        intdata_path<-paste0 (pointin(wdPath,'Normalization'),input$filePath)
 
         outpath<-pointin(wdPath,'Downstream')
 

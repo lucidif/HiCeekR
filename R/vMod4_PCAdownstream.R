@@ -158,7 +158,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
         shiny::fluidRow(
             shiny::column(10, shiny::br(),
-                          selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'Binning') ,'raw contact matrix', subset=TRUE, pattern='_raw_matrix.tsv')
+                          selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'Normalization') ,'raw contact matrix', subset=TRUE, pattern='.tsv')
                           #shiny::fileInput(pcaNServer('pcaTableLoaded'), label="pca file")
                           ),
             shiny::column(2,
@@ -564,7 +564,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         require(HiTC)
 
 
-        intdata_path<-paste0 (pointin(wdPath,'Binning'),input$pcaTableLoaded)
+        intdata_path<-paste0 (pointin(wdPath,'Normalization'),input$pcaTableLoaded)
 
         outpath<-pointin(wdPath,'Downstream')
 
@@ -575,9 +575,11 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         print(paste0("PCnumber: ",PCnumber))
 
         intdata<-read.table(intdata_path,sep="\t",header=TRUE)
+        #intdataTT<<-intdata
         rownames(intdata)<-intdata$index
         intdata<-intdata[,-1]
         intdata<-Matrix::as.matrix(intdata)
+        colnames(intdata)<-rownames(intdata) #solo se simmetriche ordinate
 
         #int<-data.matrix(intdata)
 
@@ -628,13 +630,13 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         intdata<-Matrix::Matrix(intdata)#,dimnames=ls)
         #names(gr)<-rownames(intdata)
 
-        htcxp<-new("HTCexp",intdata,xgi=grcl,ygi=grcl)
+        htcxp<-methods::new("HTCexp",intdata,xgi=grcl,ygi=grcl)
         #htcxp<-new("HTCexp",intdata)
         #pr<-pca.hic(htcxp,normPerExpected=FALSE,npc=1)
         #pr1<-pca.hic(htcxp,normPerExpected=TRUE,npc=1)
         #pr2<-pca.hic(htcxp,normPerExpected=TRUE,npc=2)
         #pr3<-pca.hic(htcxp,normPerExpected=TRUE,npc=3,asGRangesList=TRUE)
-        pcaRes<-pca.hic(htcxp,normPerExpected=TRUE,npc=PCnumber,asGRangesList=FALSE)
+        pcaRes<-pca.hic(htcxp,normPerExpected=FALSE,npc=PCnumber,asGRangesList=FALSE)
 
         resTable<-matrix(ncol=PCnumber,nrow=length(originalNames))
         colnames(resTable)<-rep(paste0("PC",1:PCnumber))
