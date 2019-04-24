@@ -588,6 +588,8 @@ library(plotly)
                             #start=input$startNameAxis,
                             #end=input$endNameAxis)
             )
+            #datoploTT<<-datoplo
+            datoplo[, length(datoplo[1,])][is.na(datoplo[, length(datoplo[1,])])] <- 0 #claklme
 
             #p<-plot_ly (datoplo, x=datoplo[,1], y=datoplo[,2] , type='bar' )
             slot1<-plotly::plot_ly (datoplo, y=datoplo[,2], text=maNames,
@@ -616,6 +618,7 @@ library(plotly)
             colnames(slot2table)<-c('regions',input$selCol_slot2)
             slot2table<-slot2table[-1,]
             print (ticksX)
+            datoplo[, length(datoplo[1,])][is.na(datoplo[, length(datoplo[1,])])] <- 0 #claklme
             slot2<-plotly::plot_ly(datoplo,
                             y=datoplo[,2],
                             text=maNames ,
@@ -647,6 +650,7 @@ library(plotly)
             slot3table<-slot3table[-1,]
 
             print (ticksX)
+            datoplo[, length(datoplo[1,])][is.na(datoplo[, length(datoplo[1,])])] <- 0 #claklme
             slot3<-plotly::plot_ly(datoplo, y=datoplo[,2], text=maNames,
                             hoverinfo='y+text' , type='bar' )  %>% layout(
                                 yaxis = list (title=input$selCol_slot3))
@@ -673,6 +677,7 @@ library(plotly)
             slot4table<-slot4table[-1,]
 
             print (ticksX)
+            datoplo[, length(datoplo[1,])][is.na(datoplo[, length(datoplo[1,])])] <- 0 #claklme
             slot4<-plotly::plot_ly (datoplo, y=datoplo[,2], text=maNames,
                             hoverinfo='y+text' , type='bar' ) %>% layout(
                                 yaxis = list (title=input$selCol_slot4))
@@ -700,6 +705,7 @@ library(plotly)
             slot5table<-slot5table[-1,]
 
             print (ticksX)
+            datoplo[, length(datoplo[1,])][is.na(datoplo[, length(datoplo[1,])])] <- 0 #claklme
             slot5<-plotly::plot_ly (datoplo, y=datoplo[,2], text=maNames,
                             hoverinfo='y+text' , type='bar' ) %>% layout(
                                 yaxis = list (title=input$selCol_slot5))
@@ -729,12 +735,15 @@ library(plotly)
             if (length (slots)==2){
                 print (paste0('length(slots)=',length(slots)))
                 p<-get(slots[2])
+                #qtt<<-q
+                #ptt<<-p
                 output$plotSlot<-plotly::renderPlotly({
                     plotly::subplot (q,
                             p ,
                             nrows=2,
                             shareX=TRUE,
-                            titleY=TRUE) %>% plotly::layout(height= 1000,
+                            titleY=TRUE
+                            ) %>% plotly::layout(height= 1000,
                                                     width= 800,
                                                     plotly::plot_ly(),
                                                     #,dimension= "ratio",

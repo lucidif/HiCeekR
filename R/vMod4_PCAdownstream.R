@@ -96,7 +96,7 @@ pca_postProcessing_UI <- function (id, label='PCA' ){
                                                      shiny::uiOutput (pcaNS('pcaTableSlot'))
                                       ),
 
-                                      shiny::column (2, shiny::br(),
+                                      shiny::column (2, shiny::br(), shiny::br(),
 
                                                      shiny::actionButton (pcaNS('startPca'),
                                                                           'start PCA')
@@ -155,8 +155,18 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
     print ("pcaTabSlot render")
     output$pcaTableSlot<- shiny::renderUI ({
-        #selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'PCA') ,'.hkr.pca file', subset=TRUE, pattern='.hkr.pca')
-        shiny::fileInput(pcaNServer('pcaTableLoaded'), label="pca file")
+
+        shiny::fluidRow(
+            shiny::column(10, shiny::br(),
+                          selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'Binning') ,'raw contact matrix', subset=TRUE, pattern='_raw_matrix.tsv')
+                          #shiny::fileInput(pcaNServer('pcaTableLoaded'), label="pca file")
+                          ),
+            shiny::column(2,
+                          shiny::numericInput(pcaNServer('PCs'), label = h5("PCs"), value = 3)
+                          )
+        )
+
+
     })
 
     print ("start observer")
@@ -513,72 +523,168 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
     shiny::observeEvent(input$startPca,{
 
         print ('.....start pca.....')
+
+
+        #pcaTable3<- read.table (input$pcaTableLoaded$datapath, sep='\t', header=TRUE)
+
+        #================================old pipe
         # pcaTable3<- read.table (paste0 (pointin(wdPath,'PCA'),
-        #                                 #input$pcaTableLoaded
-        #                                 input$pcaTableLoaded$datapa
-        #                                 ),
-        #                         sep='\t',
-        #                         header=TRUE)
-        pcaTable3<- read.table (input$pcaTableLoaded$datapath, sep='\t', header=TRUE)
-        columnsNames<- pcaTable3[,1]
-        pcaTable3<- pcaTable3[,-1]
-        #View (pcaTable3)
-        #print ('readTable.....OK')
-        zScoreTable<- zScore (pcaTable3)
-        #print ('zscore.....OK')
-        #zScoreTable[is.na(zScoreTable)] <- 0
-        tTable3<- t(zScoreTable)
-        colnames (tTable3)<-columnsNames
-        #View (tTable3)
-        print ('traspose.....OK')
-        tPca<- prcomp (tTable3)
-        Reac$tP<-tPca$rotation
-        #print (tPca)
-        #View (tPca)
-        #regions <-c('regions',colnames(tTable3))
-        regions <-colnames(tTable3)
+        #                                 input$pcaTableLoaded
+        # ),
+        # sep='\t',
+        # header=TRUE)
+        # columnsNames<- pcaTable3[,1]
+        # pcaTable3<- pcaTable3[,-1]
+        # #View (pcaTable3)
+        # #print ('readTable.....OK')
+        # zScoreTable<- zScore (pcaTable3)
+        # #print ('zscore.....OK')
+        # #zScoreTable[is.na(zScoreTable)] <- 0
+        # tTable3<- t(zScoreTable)
+        # colnames (tTable3)<-columnsNames
+        # #View (tTable3)
+        # print ('traspose.....OK')
+        # tPca<- prcomp (tTable3)
+        # Reac$tP<-tPca$rotation
+        # #print (tPca)
+        # #View (tPca)
+        # #regions <-c('regions',colnames(tTable3))
+        # regions <-colnames(tTable3)
+        #
+        # exportThis<- cbind (regions,tPca$rotation)
+        # Reac$S_exportThis<-exportThis
+        # #View (exportThis)
+        # print ('pca.....OK')
+        # pcNum<- length (tPca$rotation[1,])
+        # print (c('pcNum.....OK', pcNum))
+        #================================================end old pipe
 
-        exportThis<- cbind (regions,tPca$rotation)
-        Reac$S_exportThis<-exportThis
-        #View (exportThis)
-        print ('pca.....OK')
-        pcNum<- length (tPca$rotation[1,])
-        print (c('pcNum.....OK', pcNum))
+
+        #================================================new Start
+        require(HiTC)
 
 
-        output$pcaPlot <- shiny::renderPlot ({
-            barplot(tPca$rotation[1:100,1])
-        })
+        intdata_path<-paste0 (pointin(wdPath,'Binning'),input$pcaTableLoaded)
+
+        outpath<-pointin(wdPath,'Downstream')
+
+        PCnumber=input$PCs
+
+        print(paste0("matrix Path: ",intdata_path))
+        print(paste0("outpath: ",outpath))
+        print(paste0("PCnumber: ",PCnumber))
+
+        intdata<-read.table(intdata_path,sep="\t",header=TRUE)
+        rownames(intdata)<-intdata$index
+        intdata<-intdata[,-1]
+        intdata<-Matrix::as.matrix(intdata)
+
+        #int<-data.matrix(intdata)
+
+        #binGr<-c()
+        # testnam<-rownames(intdata)[1]
+        #
+        # chr<-strsplit(testnam,":")[[1]][1]
+        # cord<-strsplit(testnam,":")[[1]][2]
+        # start<-strsplit(cord,"-")[[1]][1]
+        # end<-strsplit(cord,"-")[[1]][2]
+
+        chr<-c()
+        cord<-c()
+        start<-c()
+        end<-c()
+        for (i in 1:length(rownames(intdata))){
+            complete<-rownames(intdata)[i]
+            chr[i]<-strsplit(complete,":")[[1]][1]
+            cord[i]<-strsplit(complete,":")[[1]][2]
+            start[i]<-strsplit(cord[i],"-")[[1]][1]
+            end[i]<-strsplit(cord[i],"-")[[1]][2]
+
+        }
+
+        df<-data.frame(chr,start,end)
+        ls<-list(chr=chr,start=start,end=end)
+        gr<-makeGRangesFromDataFrame(df)
+
+        #clnam<-rep(paste0("cl",1:length(intdata[1,])))
+        #rwnam<-rep(paste0("rw",1:length(intdata[,1])))
+        bnnam<-rep(paste0("bn",1:length(intdata[,1])))
+        originalNames<-rownames(intdata)
+
+
+        #rownames(intdata)<-rwnam
+        #colnames(intdata)<-clnam
+
+        rownames(intdata)<-bnnam
+        colnames(intdata)<-bnnam
+
+        grrw<-gr
+        #names(grrw)<-rwnam
+        names(grrw)<-bnnam
+        grcl<-gr
+        #names(grcl)<-clnam
+        names(grcl)<-bnnam
+
+        intdata<-Matrix::Matrix(intdata)#,dimnames=ls)
+        #names(gr)<-rownames(intdata)
+
+        htcxp<-new("HTCexp",intdata,xgi=grcl,ygi=grcl)
+        #htcxp<-new("HTCexp",intdata)
+        #pr<-pca.hic(htcxp,normPerExpected=FALSE,npc=1)
+        #pr1<-pca.hic(htcxp,normPerExpected=TRUE,npc=1)
+        #pr2<-pca.hic(htcxp,normPerExpected=TRUE,npc=2)
+        #pr3<-pca.hic(htcxp,normPerExpected=TRUE,npc=3,asGRangesList=TRUE)
+        pcaRes<-pca.hic(htcxp,normPerExpected=TRUE,npc=PCnumber,asGRangesList=FALSE)
+
+        resTable<-matrix(ncol=PCnumber,nrow=length(originalNames))
+        colnames(resTable)<-rep(paste0("PC",1:PCnumber))
+        rownames(resTable)<-originalNames
+        for (i in 2:length(pcaRes)){
+            resTable[,i-1]<-pcaRes[[i]]
+        }
+
+        bin<-colnames(resTable)
+        resTable<-rbind(bin,resTable)
+        colnames(resTable)<-NULL
+
+        write.table(resTable,paste0(outpath,"/pca_",input$pcaTableLoaded),sep="\t",quote=FALSE,col.names = FALSE, row.names =TRUE)
+
+        #=========================================new end
+
+        #=========================================old plot
+        # output$pcaPlot <- shiny::renderPlot ({
+        #     barplot(tPca$rotation[1:100,1])
+        # })
         print ('plot.....OK')
 
-        output$selectPCui<- shiny::renderUI ({
-
-            shiny::wellPanel (
-
-                shiny::fluidRow (
-                    shiny::column (4,
-                                   shiny::selectInput(pcaNServer("select"),
-                                                      label = h5("PC to show"),
-                                                      choices = 1:pcNum,
-                                                      selected = 1)
-                    ),
-                    shiny::column (4,
-                                   shiny::textInput (pcaNServer("exportEvName"),
-                                                     label=h5('File Name'),
-                                                     value =('evToPlot'))
-                    ),
-                    shiny::column (4, shiny::br(), shiny::br(),
-                                   shiny::actionButton (pcaNServer("exportEvButton"),
-                                                        label='Save')
-                    )
-                )
-
-            )
-            #    selectInput(pcaNServer("select"), label = h5("PC to show"),
-            #                choices = 1:pcNum,
-            #                selected = 1)
-
-        })
+        # output$selectPCui<- shiny::renderUI ({
+        #
+        #     shiny::wellPanel (
+        #
+        #         shiny::fluidRow (
+        #             shiny::column (4,
+        #                            shiny::selectInput(pcaNServer("select"),
+        #                                               label = h5("PC to show"),
+        #                                               choices = 1:pcNum,
+        #                                               selected = 1)
+        #             ),
+        #             shiny::column (4,
+        #                            shiny::textInput (pcaNServer("exportEvName"),
+        #                                              label=h5('File Name'),
+        #                                              value =('evToPlot'))
+        #             ),
+        #             shiny::column (4, shiny::br(), shiny::br(),
+        #                            shiny::actionButton (pcaNServer("exportEvButton"),
+        #                                                 label='Save')
+        #             )
+        #         )
+        #
+        #     )
+        #     #    selectInput(pcaNServer("select"), label = h5("PC to show"),
+        #     #                choices = 1:pcNum,
+        #     #                selected = 1)
+        #
+        # })
 
 
         # observeEvent (input$exportEvButton, {
@@ -590,7 +696,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         #   HCRwrite (exportThis, tabName, path=pointin (wdPath,'PCA') , quote=FALSE)
         #
         # })
-
+        #===============================================old plot end
 
     })
 

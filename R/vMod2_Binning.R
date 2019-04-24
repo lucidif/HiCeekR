@@ -468,6 +468,7 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
             maType <-'chr'
             #maType è chr quando utilizzi i chromosomi specifici, 'all' se invece li utilizzi tutti e per all VS chr ???
             toSaveMatrix<-matrixExport(redata=binSaved$redata, type=maType, chrA=input$chrInt1Box , chrB=input$chrInt2Box )
+            #toSaveMatrixTT<<-toSaveMatrix
             HCRwrite (toSaveMatrix, file=filename,
                       path=pointin(wdPath,'Binning'), row.names=TRUE)
             #controlla se ci sono i nomi, come row e col names, se ci sono non hai bisogno di produrne altri altrimenti vediti

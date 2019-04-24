@@ -759,11 +759,17 @@ networksV2_Visualization_Server <- function(input, output,
                             ''
                         })
 
+                        net<-networkD3::forceNetwork (Links=linksMa, Nodes=nodesMa, Source = "source", Target = "target",
+                                                 Value = "value", NodeID = "name",
+                                                 Group = "group", Nodesize= "size" , opacity = 0.8, zoom=TRUE)
                         output$networkSlot<- networkD3::renderForceNetwork ({
-
+                            #pdf(file=paste0(pointin(wdPath,"Visualization"),"netout.pdf"))
                             networkD3::forceNetwork (Links=linksMa, Nodes=nodesMa, Source = "source", Target = "target",
                                           Value = "value", NodeID = "name",
                                           Group = "group", Nodesize= "size" , opacity = 0.8, zoom=TRUE)
+
+                            #dev.off()
+
                         })
                     } else {
                         print ('no region found')
@@ -919,12 +925,24 @@ networksV2_Visualization_Server <- function(input, output,
             }
             #regiTT<<-regi
             #merge(regi,impTab,by=)
-            #impTabTT<<-impTab
+            impTabTT<<-impTab
+
+            regiCols<-colnames(regi)
+            impTabCols<-colnames(impTab)[-1]
+            cortCols<-c(regiCols,impTabCols)
+            regi<-merge(regi,impTab,by="ensembl")
+            regi<-regi[,cortCols]
+
         } else {
             print("no expr files selected")
             #exprfileSelect<<-"none"
         }
-        regi<-merge(regi,impTab,by="ensembl")
+        # regiCols<-colnames(regi)
+        # impTabCols<-colnames(impTab)[-1]
+        # cortCols<-c(regiCols,impTabCols)
+        # regi<-merge(regi,impTab,by="ensembl")
+        # regi<-regi[,cortCols]
+
 
         regi[,4]<- rep(paste0("<a href=","'http://www.genecards.org/cgi-bin/carddisp.pl?gene=", regi[,4], "'>", regi[,4],"</a>" ))
         regi[,5]<- rep(paste0("<a href=","'http://www.ensembl.org/Multi/Search/Results?q=", regi[,5], "'>", regi[,5],"</a>" ))
@@ -966,6 +984,8 @@ networksV2_Visualization_Server <- function(input, output,
             colnames(resNam) <- c('reg1_genes','reg2_genes')
             results<-cbind (results,resNam)
             resultsNL=results
+            #resultsTT<<-results
+            #regiTT<<-regi
             #controlla nomi delle reg e aggiungi genesNames nella colonne 7 e 8
             for (i in 1:length(results[,1])){
                 binOfInterest1<-results[i,1]
@@ -981,33 +1001,52 @@ networksV2_Visualization_Server <- function(input, output,
                 genesNames<- Reduce (paste0,genesNames)
                 genesNLNames= Reduce (paste0,genesNLNames)
 
-                results [i,7]<-genesNames
-                resultsNL [i,7]<-genesNLNames
+                # results [i,7]<-genesNames
+                # resultsNL [i,7]<-genesNLNames
+
+                results[i,length(results[1,])-1]<-genesNames
+                resultsNL[i,length(results[1,])-1]<-genesNLNames
+
 
                 regSub <- subset (regi , regi[,1]==binOfInterest2)
                 regNLsub= subset (regiNL, regiNL[,1]==binOfInterest2)
 
                 print (regSub)
+                #regSubTT<<-regSub
+
                 genesNames<- as.array (regSub[,4])
                 genesNLNames= as.array (regNLsub[,4])
                 genesNames<- rep (paste0(genesNames,','))
-                genesNLNames=rep (paste0(genesNLNames,','))
+                genesNLNames=rep (paste0(genesNLNames,collapse=','))
                 genesNames<- Reduce (paste0,genesNames)
                 genesNLNames= Reduce (paste0,genesNLNames)
 
-                results [i,8]<-genesNames
-                resultsNL [i,8]<-genesNLNames
+                results [i,length(results[1,])]<-genesNames
+                resultsNL [i,length(results[1,])]<-genesNLNames
             }
             savedValue$resultsNLsave=resultsNL
             ##resultsNLTT<<-resultsNL
             #View (resultsNL)
+            #resultsTT<<-results
+            if (input$intra==TRUE){
+                fileOutName<-paste0(ratio,"_",chr,"_",start,"_",end,"_gb",
+                                    globalMax,"_mindist",minDistance,".txt")
+            } else {
+                fileOutName<-paste0(ratio,"_",chr,"_",start,"_",end,"_gb",
+                                    globalMax,".txt")
+            }
+
+            print(paste0(pointin(wdPath,'Visualization',sys=FALSE),fileOutName))
+            write.table(resultsNL,paste0(pointin(wdPath,'Visualization',sys=FALSE),
+                                       fileOutName), sep="\t",row.names=FALSE,
+                        col.names=TRUE, quote=FALSE)
 
         }
 
         output$tables<- shiny::renderUI ({
 
             shiny::tabsetPanel (
-                shiny::tabPanel ('interactions',
+                shiny::tabPanel ('Interactions',
 
                             shiny::fluidRow (
                                 shiny::column(12,
@@ -1017,7 +1056,7 @@ networksV2_Visualization_Server <- function(input, output,
                                 )
 
                 ),
-                shiny::tabPanel ('genes',
+                shiny::tabPanel ('Genes',
 
                     shiny::fluidRow ( shiny::column (12,
                                         shiny::wellPanel (
@@ -1044,16 +1083,16 @@ networksV2_Visualization_Server <- function(input, output,
 
                 ),
 
-                shiny::tabPanel('pathway',
+                shiny::tabPanel('Functional',
 
                     shiny::fluidRow(shiny::column(12,
                                         shiny::wellPanel(
                                             shiny::fluidRow(
                                                  #column (6, selectInput (nsServer('pathway_selectBin'), label='select bin of interest', choices=uniqueBin)),
-                                                shiny::column (3,
-                                                    shiny::numericInput(nsServer("threshold"),
-                                                                        label = h5("threshold"),
-                                                                        value = 0.001 )),
+                                                # shiny::column (3,
+                                                #     shiny::numericInput(nsServer("threshold"),
+                                                #                         label = h5("threshold"),
+                                                #                         value = 0.001 )),
 
                                                 shiny::column (2,
                                                     shiny::selectInput(nsServer('pathway_organism'),
@@ -1066,7 +1105,7 @@ networksV2_Visualization_Server <- function(input, output,
                                                         shiny::actionButton(
 
                                                             nsServer('pathFinder'),
-                                                            label=h5('find pathway'),
+                                                            label=h5('Enrich'),
                                                             class = "btn-primary"
                                                             ))
                                                          #actionButton(nsServer('exploreContact'), label=h5('find bin'))
@@ -1872,7 +1911,7 @@ networksV2_Visualization_Server <- function(input, output,
 
         interaSubFinal= unique(interaSubFinal)
         #interaSubFinalTT<<-interaSubFinal
-        interaSubFinal= subset(interaSubFinal, as.numeric(interaSubFinal[,5])>=input$threshold)
+        #interaSubFinal= subset(interaSubFinal, as.numeric(interaSubFinal[,5])>=input$threshold)
         savedValue$interaSubFinal=interaSubFinal
 
         #2)cerca le regioni con cui intergisce (questa poi andrà inserito all'interno di un select input della GUI)
@@ -1898,7 +1937,7 @@ networksV2_Visualization_Server <- function(input, output,
                 ),
                 shiny::column(12,
                     busyIndUI(
-                    shiny::actionButton(nsServer('pathFinder'), label=h5('find pathway'),
+                    shiny::actionButton(nsServer('pathFinder'), label=h5('Enrich'),
                                         class = "btn-primary"
                                         )
                 ))
@@ -1917,7 +1956,7 @@ networksV2_Visualization_Server <- function(input, output,
         intera=savedValue$resultsNLsave
         #interaTT<<-intera
         print ("1")
-        intera= subset(intera, as.numeric(intera[,5])>=input$threshold) #se questo è vuoto rimane muto
+        #intera= subset(intera, as.numeric(intera[,5])>=input$threshold) #se questo è vuoto rimane muto
         if (length(intera[,1])==0){
 
             print("no pathway finded")
@@ -1957,7 +1996,7 @@ networksV2_Visualization_Server <- function(input, output,
         #regAllGene=c(subReg1gene, subReg2gene)
 
         print ("7")
-        saveG=as.data.frame(gProfileR::gprofiler(regDivided,organism=orga))
+        saveG=as.data.frame(gProfileR::gprofiler(regDivided,organism=orga, significant=FALSE))
         #saveGTT<<-saveG
         print ("8")
         saveG=data.frame(saveG[,9],saveG[,10],saveG[,12],saveG[,14],saveG[,3],saveG[,4],saveG[,6])

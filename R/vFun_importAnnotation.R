@@ -35,7 +35,8 @@ importAnnotation= function (name ,path){
     ##se vuoi rimuovere anche la verisione .N proverò prima a non rimuovere e vedere come va il match
     diviso2<-strsplit(ensembl, '.' ,fixed=TRUE)
     ensembl2<-diviso2[[1]][1]
-    gene_name<-gsub(' gene_name ','',diviso[[1]][4])
+
+    gene_name<-gsub(' gene_name ','',diviso[[1]][grep(' gene_name ',diviso[[1]])])
 
 
     #alldiviso<-strsplit(annoTab[,8], ';', fixed=TRUE)
@@ -50,7 +51,7 @@ importAnnotation= function (name ,path){
         ##se vuoi rimuovere anche la verisione .N proverò prima a non rimuovere e vedere come va il match
         diviso2<-strsplit(ensembl, '.' ,fixed=TRUE)
         ensembl2<-diviso2[[1]][1]
-        gene_name<-gsub(' gene_name ','',diviso[[1]][4])
+        gene_name<-gsub(' gene_name ','',diviso[[1]][grep(' gene_name ',diviso[[1]])])
         myStd[i,1]<-ensembl2
         myStd[i,5]<-gene_name
         print (paste0('i:',i,'/',length(annoTab[,1])))
