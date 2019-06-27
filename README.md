@@ -19,7 +19,7 @@ BiocManager::install("BiocInstaller", version = "3.8")
 Now you can install HiCeekR with command
 
 ````
-devtools::install_github("lucidif/HiCeekR", dependencies=TRUE, repos=BiocInstaller::biocinstallRepos())
+devtools::install_github("lucidif/HiCeekR", repos=BiocManager::repositories())
 ````
 
 ## To get start
