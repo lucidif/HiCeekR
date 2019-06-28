@@ -29,7 +29,7 @@ HCRwrite<- function (tableToWrite,file, path ="" , append = FALSE, quote = FALSE
                      fileEncoding = "", standard.row.names=FALSE, extension=TRUE){
 
     if (extension == TRUE ) {
-        tosave_name<-paste0 (path, file, '.tsv')
+        tosave_name<-paste0 (path,"/", file, '.tsv')
     } else {tosave_name<-paste0 (path,file)}
 
 
@@ -89,7 +89,7 @@ HCRread<- function (file, path , header = TRUE, sep = "\t", quote = "\"'",
                     dec = ".", numerals = c("allow.loss", "warn.loss", "no.loss"),
                     row.names, col.names, as.is = !stringsAsFactors,
                     na.strings = "NA", colClasses = NA, nrows = -1,
-                    skip = 0, check.names = TRUE, fill = !blank.lines.skip,
+                    skip = 0, check.names = FALSE, fill = !blank.lines.skip,
                     strip.white = FALSE, blank.lines.skip = TRUE,
                     comment.char = "#",
                     allowEscapes = FALSE, flush = FALSE,
@@ -98,7 +98,20 @@ HCRread<- function (file, path , header = TRUE, sep = "\t", quote = "\"'",
                     asMatrix=TRUE
 ){
 
-    name<- paste0 (path,file)
+    if (file==""){
+        print("name<-path")
+        name<-path
+    }
+
+    if (path==""){
+        print("name<-file")
+        name<-file
+    }
+
+    if ( file!="" && path!=""){
+        name<-paste0(path,"/",file)
+    }
+
 
     prime<-read.table (name,header = header, sep = sep, quote = quote,
                        dec = dec, numerals = numerals,

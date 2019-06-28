@@ -137,7 +137,7 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
         print(paste0("matrix Path: ",intdata_path))
         print(paste0("outpath: ",outpath))
 
-        intdata<-read.table(intdata_path,sep="\t",header=TRUE)
+        intdata<-read.table(intdata_path,sep="\t",header=TRUE,check.names = FALSE)
         rownames(intdata)<-intdata$index
         intdata<-intdata[,-1]
         intdata<-Matrix::as.matrix(intdata)

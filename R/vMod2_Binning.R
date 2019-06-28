@@ -359,8 +359,12 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
                 shiny::fluidRow (
                     shiny::column(4,
                         shiny::checkboxInput(binns("contactMatrix_check"),
-                                             label = h5("Contact Matrix"),
+                                             label = h5("Contacts Matrix"),
                                              value = TRUE)),
+                    # shiny::column(4,
+                    #     shiny::checkboxInput(binns("allcontactMatrix_check"),
+                    #                         label = h5("All Contacts Matrix"),
+                    #                         value = TRUE)),
                     #column(4,checkboxInput(binns("selectRegBinTable_check"), label = "selective bin table", value = FALSE)),
                     # shiny::column(4,
                     #     shiny::checkboxInput(binns("contactTable_check"),
@@ -475,6 +479,20 @@ DiffHiC_BinningV2_Server <- function(input, output, session, stringsAsFactors,
             #mane nel vecchio modulo del binning
             print (paste0(filename,'.....SAVED'))
         }
+
+        # if (input$allcontactMatrix_check==TRUE){
+        #     #binTT<<-binSaved$redata
+        #     filename= 'allcnts_raw_matrix'
+        #     maType <-'all'
+        #
+        #     toSaveMatrix<-matrixExport(redata=binSaved$redata, type=maType, chrA=input$chrInt1Box , chrB=input$chrInt2Box )
+        #     #toSaveMatrixTT<<-toSaveMatrix
+        #     HCRwrite (toSaveMatrix, file=filename,
+        #               path=pointin(wdPath,'Binning'), row.names=TRUE)
+        #     #controlla se ci sono i nomi, come row e col names, se ci sono non hai bisogno di produrne altri altrimenti vediti
+        #     #mane nel vecchio modulo del binning
+        #     print (paste0(filename,'.....SAVED'))
+        # }
 
         # if (input$contactTable_check==TRUE){
         #     filename<-paste0(filenameCommon,'_conTable')

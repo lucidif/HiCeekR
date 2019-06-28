@@ -5,7 +5,8 @@
 \title{as.brute.matrix}
 \usage{
 as.brute.matrix(InteractionSer_object, first = "all", second = "all",
-  fill = NULL, alternativeFill = FALSE)
+  fill = NULL, alternativeFill = FALSE, NAmin = FALSE,
+  wkFolder = "")
 }
 \arguments{
 \item{alternativeFill}{}

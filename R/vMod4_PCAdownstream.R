@@ -97,9 +97,9 @@ pca_postProcessing_UI <- function (id, label='PCA' ){
                                       ),
 
                                       shiny::column (2, shiny::br(), shiny::br(),
-
-                                                     shiny::actionButton (pcaNS('startPca'),
-                                                                          'start PCA')
+                                                    shiny::uiOutput(pcaNS('startPcaSlot'))
+                                                    #shiny::actionButton (pcaNS('startPca'),
+                                                    #                      'start PCA')
 
                                       )
 
@@ -157,17 +157,46 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
     output$pcaTableSlot<- shiny::renderUI ({
 
         shiny::fluidRow(
-            shiny::column(10, shiny::br(),
+            shiny::column(8, shiny::br(),
                           selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'Normalization') ,'raw contact matrix', subset=TRUE, pattern='.tsv')
                           #shiny::fileInput(pcaNServer('pcaTableLoaded'), label="pca file")
                           ),
             shiny::column(2,
                           shiny::numericInput(pcaNServer('PCs'), label = h5("PCs"), value = 3)
+
+                          ),
+            shiny::column(2,
+                          shiny::uiOutput(pcaNServer('chromoSelectorSlot'))
                           )
         )
 
 
     })
+
+     observeEvent(input$pcaTableLoaded,{
+         #print("observe matrix")
+         #paste0(pointin(wdPath,'Normalization'),input$pcaTableLoaded)
+        if (file.exists(paste0(pointin(wdPath,'Normalization'),input$pcaTableLoaded))==TRUE){
+        print("detect chromosomes")
+            chromos<-detectChromos(paste0(pointin(wdPath,'Normalization'),
+                                                   input$pcaTableLoaded))
+            #if(length(chromos)>1){
+                output$chromoSelectorSlot<-shiny::renderUI({
+                    shiny::selectInput(pcaNServer('chromoSelector'),
+                                       label="chromo of interest",
+                                       choices = chromos,
+                                       selected=chromos[1]
+                                       )
+                })
+
+                output$startPcaSlot<-shiny::renderUI({
+                    shiny::actionButton (pcaNServer('startPca'),
+                                         'start PCA')
+                })
+            #}
+
+    }
+     })
 
     print ("start observer")
     shiny::observeEvent(input$bamLoadPath,{
@@ -485,7 +514,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
                     #pcaModTT2<<-pcaMod
                     pcaMod2<-Reac$pcaMod[,-which(colnames(pcaMod) %in% input$choiceInput)] #così puoi rimuovere la colonna specifica
                     #pcaMod2<-pcaMod[,-which(colnames(TTpcaMod) %in% 'H4K20me1')] #così puoi rimuovere la colonna specifica
-                    pcaMod3= as.matrix(Reac$pcaMod[,input$choiceInput]) #generi matrice dei soli input
+                    pcaMod3=as.matrix(Reac$pcaMod[,input$choiceInput]) #generi matrice dei soli input
                     m<-sum(as.numeric(pcaMod3))
 
                     for (i in 2:length(pcaMod2[1,])){
@@ -524,26 +553,49 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
         print ('.....start pca.....')
 
-
         #pcaTable3<- read.table (input$pcaTableLoaded$datapath, sep='\t', header=TRUE)
 
         #================================old pipe
-        # pcaTable3<- read.table (paste0 (pointin(wdPath,'PCA'),
-        #                                 input$pcaTableLoaded
-        # ),
+        # zs<-FALSE
+        # correlation<-FALSE
+        #
+        # intdata_path<-paste0 (pointin(wdPath,'Normalization'),input$pcaTableLoaded)
+        # pcaTable3<- read.table (intdata_path,
         # sep='\t',
         # header=TRUE)
-        # columnsNames<- pcaTable3[,1]
-        # pcaTable3<- pcaTable3[,-1]
+        #
+        # #sbagliato
+        # #columnsNames<- pcaTable3[,1]
+        # #pcaTable3<- pcaTable3[,-1]
+        #
         # #View (pcaTable3)
-        # #print ('readTable.....OK')
-        # zScoreTable<- zScore (pcaTable3)
-        # #print ('zscore.....OK')
-        # #zScoreTable[is.na(zScoreTable)] <- 0
-        # tTable3<- t(zScoreTable)
-        # colnames (tTable3)<-columnsNames
+        #
+        # rownames(pcaTable3)<-pcaTable3[,1]
+        # pcaTable3<-pcaTable3[,-1]
+        # pcaTable3<-sapply(pcaTable3,as.numeric)
+        # #pcaTable3[is.na(pcaTable3)]<-4.161663e-06
+        #
+        #
+        #
+        # if (zs==TRUE){
+        #     #print ('readTable.....OK')
+        #     zScoreTable<- zScore (pcaTable3)
+        #     #print ('zscore.....OK')
+        #     tTable3<- t(zScoreTable)
+        # } else {tTable3<-t(pcaTable3)}
+        #
+        #
+        # #colnames (tTable3)<-columnsNames
+        #
         # #View (tTable3)
         # print ('traspose.....OK')
+        #
+        #
+        # if (correlation==TRUE){
+        #     tTable3<-cor(tTable3,method="pearson")
+        #     #tTable3<-cor(tTable3,method="spearman")
+        # }
+        #
         # tPca<- prcomp (tTable3)
         # Reac$tP<-tPca$rotation
         # #print (tPca)
@@ -574,13 +626,13 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         print(paste0("outpath: ",outpath))
         print(paste0("PCnumber: ",PCnumber))
 
-        intdata<-read.table(intdata_path,sep="\t",header=TRUE)
+        intdata<-read.table(intdata_path,sep="\t",header=TRUE,check.names = FALSE)
         #intdataTT<<-intdata
         rownames(intdata)<-intdata$index
         intdata<-intdata[,-1]
         intdata<-Matrix::as.matrix(intdata)
         colnames(intdata)<-rownames(intdata) #solo se simmetriche ordinate
-
+        #intdataTT<<-intdata
         #int<-data.matrix(intdata)
 
         #binGr<-c()
@@ -602,6 +654,14 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
             start[i]<-strsplit(cord[i],"-")[[1]][1]
             end[i]<-strsplit(cord[i],"-")[[1]][2]
 
+        }
+
+        if (length(unique(chr))>1){
+            print("extract only one chr")
+            intdata<-intdata[which(chr==input$chromoSelector),which(chr==input$chromoSelector)]
+            chr<-chr[which(chr==input$chromoSelector)]
+            start<-start[which(chr==input$chromoSelector)]
+            end<-end[which(chr==input$chromoSelector)]
         }
 
         df<-data.frame(chr,start,end)
@@ -631,11 +691,8 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
         #names(gr)<-rownames(intdata)
 
         htcxp<-methods::new("HTCexp",intdata,xgi=grcl,ygi=grcl)
-        #htcxp<-new("HTCexp",intdata)
-        #pr<-pca.hic(htcxp,normPerExpected=FALSE,npc=1)
-        #pr1<-pca.hic(htcxp,normPerExpected=TRUE,npc=1)
-        #pr2<-pca.hic(htcxp,normPerExpected=TRUE,npc=2)
-        #pr3<-pca.hic(htcxp,normPerExpected=TRUE,npc=3,asGRangesList=TRUE)
+
+        #pcaRes<-pca.hic(htcxp,normPerExpected=FALSE,npc=PCnumber,asGRangesList=FALSE)
         pcaRes<-pca.hic(htcxp,normPerExpected=FALSE,npc=PCnumber,asGRangesList=FALSE)
 
         resTable<-matrix(ncol=PCnumber,nrow=length(originalNames))

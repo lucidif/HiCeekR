@@ -178,6 +178,13 @@ networksV2_Visualization_Server <- function(input, output,
     # require (gProfileR)
     # require (ggplot2)
 
+    resave <- function(..., list = character(), file) {
+        previous  <- load(file)
+        var.names <- c(list, as.character(substitute(list(...)))[-1L])
+        for (var in var.names) assign(var, get(var, envir = parent.frame()))
+        save(list = unique(c(previous, var.names)), file = file)
+    }
+
     nsServer<-session$ns
     #source ('diffHic_fun.R')
     savedValue<-shiny::reactiveValues (regiSave='none', resulSave='none')
@@ -385,6 +392,8 @@ networksV2_Visualization_Server <- function(input, output,
         start <- as.numeric   (input$startWi)
         end   <- as.numeric   (input$endWi)
 
+
+
         ratio<- as.numeric (input$normValue)  #value from 0 to 1
         globalMax<- input$globalM
 
@@ -409,6 +418,8 @@ networksV2_Visualization_Server <- function(input, output,
         print (paste0('ratio:',ratio))
         print (paste0('minDistance:', minDistance))
         print (paste0('globalMax:', globalMax))
+
+        save(contactPath, matrixPath, bintPath, annoPath,chr, start, end, ratio, minDistance, globalMax, file=paste0(pointin(wdPath,'Visualization'),"/network.Rdata"))
 
         # controllo della validità delle coordinate impostate==================
 
@@ -759,9 +770,12 @@ networksV2_Visualization_Server <- function(input, output,
                             ''
                         })
 
+
                         net<-networkD3::forceNetwork (Links=linksMa, Nodes=nodesMa, Source = "source", Target = "target",
                                                  Value = "value", NodeID = "name",
                                                  Group = "group", Nodesize= "size" , opacity = 0.8, zoom=TRUE)
+                        resave(linksMa,nodesMa,file=paste0(pointin(wdPath,'Visualization'),"/network.Rdata"))
+
                         output$networkSlot<- networkD3::renderForceNetwork ({
                             #pdf(file=paste0(pointin(wdPath,"Visualization"),"netout.pdf"))
                             networkD3::forceNetwork (Links=linksMa, Nodes=nodesMa, Source = "source", Target = "target",
@@ -925,7 +939,7 @@ networksV2_Visualization_Server <- function(input, output,
             }
             #regiTT<<-regi
             #merge(regi,impTab,by=)
-            impTabTT<<-impTab
+            #impTabTT<<-impTab
 
             regiCols<-colnames(regi)
             impTabCols<-colnames(impTab)[-1]
@@ -946,6 +960,7 @@ networksV2_Visualization_Server <- function(input, output,
 
         regi[,4]<- rep(paste0("<a href=","'http://www.genecards.org/cgi-bin/carddisp.pl?gene=", regi[,4], "'>", regi[,4],"</a>" ))
         regi[,5]<- rep(paste0("<a href=","'http://www.ensembl.org/Multi/Search/Results?q=", regi[,5], "'>", regi[,5],"</a>" ))
+
         savedValue$regiSave<-regi
         print("genes table link exported")
         regiNL<-regi
@@ -1037,6 +1052,7 @@ networksV2_Visualization_Server <- function(input, output,
             }
 
             print(paste0(pointin(wdPath,'Visualization',sys=FALSE),fileOutName))
+            resave(resultsNL,file=paste0(pointin(wdPath,'Visualization'),"/network.Rdata"))
             write.table(resultsNL,paste0(pointin(wdPath,'Visualization',sys=FALSE),
                                        fileOutName), sep="\t",row.names=FALSE,
                         col.names=TRUE, quote=FALSE)
@@ -1135,243 +1151,6 @@ networksV2_Visualization_Server <- function(input, output,
 
                 )
 
-
-                #,shiny::tabPanel ('make interactions report'
-                #
-                #           , shiny::tabsetPanel (
-                #               #
-                #             shiny::tabPanel ('make report',
-                #
-                #                 shiny::fluidRow(
-                #
-                #                         shiny::column (12,
-                #
-                #                                 shiny::wellPanel (
-                #
-                #                                     shiny::fluidRow (
-                #                                         shiny::column (4,
-                #                                             shiny::actionButton(
-                #                                                 nsServer('repButton'),
-                #                                                 label='make report')),
-                #                                             shiny::column (8,
-                #                                                 shiny::textInput(
-                #                                                     nsServer('reportName'),
-                #                                                     label='file name'))
-                #                                         )
-                #
-                #                                     )
-                #
-                #                             )
-                #
-                #                         )
-                #
-                #                         ,shiny::fluidRow(
-                #                             shiny::column (12,
-                #                                 shiny::wellPanel('additional plots',
-                #
-                #
-                #                                               #
-                #                                     shiny::fluidRow(
-                #                                         shiny::column(12,
-                #                                             shiny::wellPanel('slot 1',
-                #                                                 shiny::fluidRow (
-                #                                                     shiny::column (3,
-                #                                                         shiny::checkboxInput (
-                #                                                             nsServer('activeSlot1'),
-                #                                                             label='active',
-                #                                                             value=FALSE ) ),
-                #                                                     shiny::column (6,
-                #                                                         shiny::fileInput (
-                #                                                         nsServer('fileInput_slot1'),
-                #                                                             label='file') )
-                #                                                                            ),
-                #                                                 shiny::fluidRow(
-                #                                                     shiny::column (12,
-                #                                                         shiny::uiOutput(
-                #                                                             nsServer('pos_slot1')))
-                #                                                                            ))))
-                #                                               #
-                #                                               #
-                #                                               ,shiny::fluidRow(
-                #                                                   shiny::column(12,
-                #                                                         shiny::wellPanel('slot 2',
-                #                                                             shiny::fluidRow(
-                #                                                                 shiny::column (3,
-                #                                                                     shiny::checkboxInput (
-                #                                                                         nsServer('activeSlot2'),
-                #                                                                         label='active',
-                #                                                                         value=FALSE ) ),
-                #                                                                 shiny::column (6,
-                #                                                                     shiny::fileInput(
-                #                                                                         nsServer('fileInput_slot2'),
-                #                                                                         label='file') )
-                #                                                                             ),
-                #                                                             shiny::fluidRow (
-                #                                                                 shiny::column (12,
-                #                                                                     shiny::uiOutput(
-                #                                                                         nsServer('pos_slot2')))
-                #                                                                             )
-                #                                                             )
-                #                                                         )
-                #                                                   )
-                #                                               #slot3 #=================================================
-                #                                               ,shiny::fluidRow(
-                #                                                 shiny::column(12,
-                #                                                     shiny::wellPanel('slot 3',
-                #                                                         shiny::fluidRow(
-                #                                                             shiny::column (3,
-                #                                                                 shiny::checkboxInput(
-                #                                                                     nsServer('activeSlot3'),
-                #                                                                     label='active',
-                #                                                                     value=FALSE ) ),
-                #                                                             shiny::column (6,
-                #                                                                 shiny::fileInput(
-                #                                                                     nsServer('fileInput_slot3'),
-                #                                                                     label='file') )
-                #                                                                             ),
-                #                                                                 shiny::fluidRow (
-                #                                                                     shiny::column (12,
-                #                                                                         shiny::uiOutput(
-                #                                                                             nsServer('pos_slot3'))
-                #                                                                         )
-                #                                                                             )
-                #                                                         )
-                #                                                     )
-                #                                                 )
-                #                                               #slot4  #=================================================
-                #                                               ,shiny::fluidRow(
-                #                                                     shiny::column(12,
-                #                                                         shiny::wellPanel('slot 4',
-                #                                                             shiny::fluidRow (
-                #                                                                 shiny::column (3,
-                #                                                                     shiny::checkboxInput (
-                #                                                                         nsServer('activeSlot4'),
-                #                                                                         label='active',
-                #                                                                         value=FALSE ) ),
-                #                                                                 shiny::column (6,
-                #                                                                     shiny::fileInput (
-                #                                                                         nsServer('fileInput_slot4'),
-                #                                                                         label='file') )
-                #                                                                             ),
-                #                                                                 shiny::fluidRow (
-                #                                                                     shiny::column(12,
-                #                                                                         shiny::uiOutput(
-                #                                                                             nsServer('pos_slot4'))
-                #                                                                         )
-                #                                                                     )
-                #                                                             )
-                #                                                         )
-                #                                                     )
-                #
-                #                                               #slot5 #===================================================
-                #                                               ,shiny::fluidRow(
-                #                                                     shiny::column(12,
-                #                                                         shiny::wellPanel('slot 5',
-                #                                                             shiny::fluidRow (
-                #                                                                 shiny::column (3,
-                #                                                                     shiny::checkboxInput (
-                #                                                                         nsServer('activeSlot5'),
-                #                                                                         label='active',
-                #                                                                         value=FALSE ) ),
-                #                                                                     shiny::column (6,
-                #                                                                         shiny::fileInput (
-                #                                                                             nsServer('fileInput_slot5'),
-                #                                                                             label='file') )
-                #                                                                             ),
-                #                                                                             shiny::fluidRow (
-                #                                                                                 shiny::column (12,
-                #                                                                                     shiny::uiOutput(
-                #                                                                                         nsServer('pos_slot5')
-                #                                                                                         )
-                #                                                                                     )
-                #                                                                             )
-                #                                                             )
-                #                                                         )
-                #                                                     )
-                #                                               #
-                #                                               #
-                #                                     )
-                #                             )
-                #                         )
-                #
-                #               )
-                #
-                #
-                #           )
-                # )
-
-                # shiny::tabPanel('make genes report',
-                #
-                #     shiny::wellPanel(
-                #         shiny::fluidRow(
-                #             shiny::column(10,
-                #                 shiny::textInput(
-                #                     nsServer('gene_reportName'),
-                #                     label='file name')
-                #                  ),
-                #                 shiny::column(2,
-                #                     shiny::checkboxInput(
-                #                         nsServer("expCheck"),
-                #                         label = h5("add expression"),
-                #                         value = FALSE)
-                #                  )
-                #              )
-                #         ),
-                #
-                #
-                #
-                #         shiny::fluidRow (
-                #             shiny::column (12,
-                #                     shiny::uiOutput(nsServer("expOptSlot"))
-                #              )
-                #          ),
-                #
-                #
-                #
-                #         shiny::fluidRow(
-                #
-                #
-                #             shiny::column (2, shiny::br(), shiny::br(),
-                #                     shiny::actionButton(nsServer("geneReport"),
-                #                                         label=h5('make report'))
-                #              )
-                #
-                #          )
-                #
-                #
-                #
-                # ),
-
-                # shiny::tabPanel ('list of reports',
-                #
-                #     shiny::wellPanel (
-                #
-                #
-                #             shiny::fluidRow(
-                #                 shiny::column (12,
-                #                     shiny::selectInput(
-                #                         nsServer("selectRepType"),
-                #                         label = h5("report"),
-                #                         choices = c( "all" , "interactions" , "regions" ),
-                #                             selected = 1)
-                #                    )
-                #                ),
-                #
-                #
-                #             shiny::fluidRow (
-                #
-                #                 shiny::column(12,
-                #                     shiny::dataTableOutput(
-                #                         nsServer('htmlReport'))
-                #                           #htmlOutput (nsServer('htmlReport'))
-                #                           #includeHTML('/home/lucio/Dropbox/HiCeekR/HiCeekR_0.9/reports/my_html_test_HCR.html')
-                #                    )
-                #
-                #                )
-                #
-                #            )
-                # )
-
             )
 
         })
@@ -1420,7 +1199,7 @@ networksV2_Visualization_Server <- function(input, output,
         results[,4]<-as.numeric(as.character(results[,4]))
         results[,5]<-as.numeric(as.character(results[,5]))
         results[,6]<-as.numeric(as.character(results[,6]))
-
+        resave(results,file=paste0(pointin(wdPath,'Visualization'),"/network.Rdata"))
         output$resultable<- shiny::renderDataTable ({
             results
         }, escape=FALSE)
