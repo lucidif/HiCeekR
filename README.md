@@ -13,7 +13,6 @@ and BiocInstaller from Bioconductor website
 ````
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("BiocInstaller", version = "3.8")
 ````
 
 Now you can install HiCeekR with command
