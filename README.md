@@ -29,3 +29,5 @@ At the begin, launch the app by commands
 library(HiCeekR)
 HiCeekR()
 ````
+
+For more details, please consult hiceek_manual.pdf documentation file
