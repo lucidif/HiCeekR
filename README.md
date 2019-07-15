@@ -42,7 +42,7 @@ Once installed, launch HiCeekR Shiny app with the following commands:
 library(HiCeekR)
 HiCeekR()
 ````
-For more details, please refer hiceek_manual.pdf documentation file here: https://github.com/lucidif/HiCeekR/blob/master/hiceekr_manual.pdf
+For more details, please consult hiceek_manual.pdf documentation (https://github.com/lucidif/HiCeekR/blob/master/hiceekr_manual.pdf)
 
 ## Example Data
 
@@ -53,11 +53,11 @@ a) Annotations zip file contains the reference genome in fasta format and the an
 
 b) Input Files contains all input files supported by HiCeekR that are:
 
-    -sortmark_REP7_SRR1802426.bam and sortmark_REP5_SRR1802424.bam Hi-C alligned reads files (Grubert 2015, GSE62742)
+   1)sortmark_REP7_SRR1802426.bam and sortmark_REP5_SRR1802424.bam Hi-C alligned reads files (Grubert 2015, GSE62742)
     
-    -ENCFF000ATY_H3K9ac_GM12878_hg19.bam/bai and H3K27me3.bam/bai ChiP-seq Bam from ENCODE (ENCSR447YYN) and their index bai      files.
+   2)ENCFF000ATY_H3K9ac_GM12878_hg19.bam/bai and H3K27me3.bam/bai ChiP-seq Bam files from ENCODE (ENCSR447YYN) and their          index bai files.
     
-    -GSM2400247_ENCFF383EXA_gm12878_rnaSeq.tsv expression RNA-Seq Data from ENCODE (ENCFF383EXA)
+   3)GSM2400247_ENCFF383EXA_gm12878_rnaSeq.tsv expression RNA-Seq Data from ENCODE (ENCFF383EXA)
 
 
 
