@@ -32,4 +32,4 @@ HiCeekR()
 
 The example Data are available on http://bioinfo.na.iac.cnr.it/hiceekr 
 
-For more details, please refer hiceek_manual.pdf documentation file https://github.com/lucidif/HiCeekR/blob/master/hiceekr_manual.pdf
+For more details, please refer hiceek_manual.pdf documentation file here: https://github.com/lucidif/HiCeekR/blob/master/hiceekr_manual.pdf
