@@ -47,13 +47,16 @@ For more details, please refer hiceek_manual.pdf documentation file here: https:
 ## Example Data
 
 The example Data are available on http://bioinfo.na.iac.cnr.it/hiceekr 
-two zip file are present:
+you can download two files
 
 a) Annotations zip file contains the reference genome in fasta format and the annotations in the format supported by HiCeekR
 
 b) Input Files contains all input files supported by HiCeekR that are:
+
     -sortmark_REP7_SRR1802426.bam and sortmark_REP5_SRR1802424.bam Hi-C alligned reads files (Grubert 2015, GSE62742)
+    
     -ENCFF000ATY_H3K9ac_GM12878_hg19.bam/bai and H3K27me3.bam/bai ChiP-seq Bam from ENCODE (ENCSR447YYN) and their index bai      files.
+    
     -GSM2400247_ENCFF383EXA_gm12878_rnaSeq.tsv expression RNA-Seq Data from ENCODE (ENCFF383EXA)
 
 
