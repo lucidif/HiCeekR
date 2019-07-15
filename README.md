@@ -30,4 +30,6 @@ library(HiCeekR)
 HiCeekR()
 ````
 
-For more details, please consult hiceek_manual.pdf documentation file
+The example Data are available on http://bioinfo.na.iac.cnr.it/hiceekr 
+
+For more details, please refer hiceek_manual.pdf documentation file 
