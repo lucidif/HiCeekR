@@ -49,9 +49,9 @@ For more details, please consult hiceek_manual.pdf documentation (https://github
 The example Data are available on http://bioinfo.na.iac.cnr.it/hiceekr 
 you can download two files
 
-a) Annotations zip file contains the reference genome in fasta format and the annotations in the format supported by HiCeekR
+a) Annotations zip file contains the reference genome in fasta format and the HiCeekR annotations tsv file.
 
-b) Input Files contains all input files supported by HiCeekR that are:
+b) Input zip file contains all input files supported by HiCeekR that are:
 
    1)sortmark_REP7_SRR1802426.bam and sortmark_REP5_SRR1802424.bam Hi-C alligned reads files (Grubert 2015, GSE62742)
     
