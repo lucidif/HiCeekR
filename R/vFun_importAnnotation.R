@@ -57,5 +57,7 @@ importAnnotation= function (name ,path){
         print (paste0('i:',i,'/',length(annoTab[,1])))
     }
 
-    HCRwrite (myStd, paste0(name,'_HiCeekRstd') ,path)
+    #HCRwrite (myStd, paste0(name,'_HiCeekRstd') ,path)
+    return(myStd)
+
 }

@@ -158,7 +158,7 @@ pca_postProcessing_Server <- function (input, output, session, stringsAsFactors,
 
         shiny::fluidRow(
             shiny::column(8, shiny::br(),
-                          selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'Normalization') ,'raw contact matrix', subset=TRUE, pattern='.tsv')
+                          selectFile (pcaNServer('pcaTableLoaded'), path=pointin(wdPath, 'Normalization') ,'Contact Matrix', subset=TRUE, pattern='.tsv')
                           #shiny::fileInput(pcaNServer('pcaTableLoaded'), label="pca file")
                           ),
             shiny::column(2,

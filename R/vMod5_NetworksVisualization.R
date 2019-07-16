@@ -816,8 +816,8 @@ networksV2_Visualization_Server <- function(input, output,
 
         ##ORA SI DEVE SALVARE LA TABELLA DELLE ANNOTAZIONI E LA MOSTRA IN UN DATA TABLE
 
-        an<-read.table (annoPath, sep='\t', header=TRUE)
-        #an<-importAnnotation(name="",path=annoPath)
+        #an<-read.table (annoPath, sep='\t', header=TRUE)
+        an<-importAnnotation(name="",path=annoPath)
 
         #considera la tabella con gli ensebl come prima colonna
         #         an[,2]<-rep (an[,2]<-paste0('chr',an[,2]))   ##questo va eliminato con tabelle stile chrN

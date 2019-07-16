@@ -96,7 +96,7 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
                         selectFile(hmmNs('filePath'),
                                 #path=pointin (wdPath, 'Binning') ,
                                 path=pointin (wdPath, 'Normalization') ,
-                                label='select binTable file',
+                                label='Contact Matrix',
                                 subset=TRUE,
                                 pattern='.tsv'
                                 #pattern='_raw_matrix.tsv'
