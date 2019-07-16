@@ -49,7 +49,7 @@ For more details, please consult hiceek_manual.pdf documentation (https://github
 The example Data are available on http://bioinfo.na.iac.cnr.it/hiceekr 
 you can download two files
 
-a) Annotations zip file contains the reference genome in fasta format and the HiCeekR annotations tsv file.
+a) Annotations zip file contains the reference genome in fasta format and the gencode v19 GTF annotations file.
 
 b) Input zip file contains all input files supported by HiCeekR that are:
 
