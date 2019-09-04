@@ -224,7 +224,7 @@ networksV2_Visualization_Server <- function(input, output,
         selectFile ( nsServer('Annotation'),
                      pointin(wdPath,'Annotation'),
                      label=""
-                     #,pattern='.gtf'
+                     ,pattern='.gtf'
                      )
     })
 
