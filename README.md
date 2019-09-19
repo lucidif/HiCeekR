@@ -31,7 +31,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 iii) Now install HiCeekR using the command
 
 ````
-devtools::install_github("lucidif/HiCeekR", repos=BiocManager::repositories())
+library(devtools) ; install_github("HenrikBengtsson/TopDom") ; install_github("lucidif/HiCeekR", repos=BiocManager::repositories())
 ````
 
 ## To get start
