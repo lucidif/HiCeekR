@@ -29,4 +29,5 @@ Imports: shiny,
     Rsamtools,
     rhdf5,
     ReportingTools,
-    haarfisz
+    haarfisz,
+    HiCseg

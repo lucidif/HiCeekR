@@ -60,9 +60,21 @@ mainNav<-function(inType="BAM"){
                                                      shiny::uiOutput ('bacovSlot')
                                     ),
 
-                                    shiny::tabPanel ('TADsHMM',
-                                                shiny::uiOutput ('hmmSlot')
-                                                )
+                                    shiny::tabPanel ('directionalityIndex',
+                                                shiny::uiOutput ('diSlot') #hmmSlot
+                                                ),
+
+                                    shiny::tabPanel ('TopDomTADs',
+                                                     shiny::uiOutput ('TopDomTADsSlot')
+                                    ),
+
+                                    shiny::tabPanel ('HiCsegTADs',
+                                                     shiny::uiOutput ('HiCsegTADsSlot')
+                                    ),
+
+                                    shiny::tabPanel ('bed2track',
+                                                     shiny::uiOutput ('bed2trackSlot')
+                                    )
 
                               ),
 

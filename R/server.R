@@ -24,6 +24,7 @@ server<-shiny::shinyServer(function(input, output, session , rea, wdDir) {
     shinyjs::show("app-content")
     print(paste0("server wd2: ",getwd()))
     shiny::addResourcePath("hcrimg", system.file("www",package = "HiCeekR"))
+    print(sessionInfo())
 
     print(system.file("hcrtmpimg","HiCeekR"))
     if (file.exists("./SysVal.Robj")==FALSE){
@@ -880,6 +881,8 @@ shiny::observeEvent(input$Filtering_reStart ,{
 # })
 
 
+#===========botton observer
+
 shiny::observeEvent(input$Filtering_branch,{
     #salva nella reactiveValues lo stato branch
     #output$moduleScreen<-shiny::renderUI({})
@@ -1000,7 +1003,7 @@ shiny::observeEvent(input$WavSis_start,{
     })
 })
 
-shiny::observeEvent(input$TADsHMM_reStart,{
+shiny::observeEvent(input$directionalityIndex_reStart,{
     #output$moduleScreen<-shiny::renderUI({})
     rea$modset<-"Downstream"
     rea$runmodState<-"restart"
@@ -1009,7 +1012,7 @@ shiny::observeEvent(input$TADsHMM_reStart,{
     })
 })
 
-shiny::observeEvent(input$TADsHMM_branch,{
+shiny::observeEvent(input$directionalityIndex_branch,{
     #output$moduleScreen<-shiny::renderUI({})
     rea$modset<-"Downstream"
     rea$runmodState<-"branch"
@@ -1018,7 +1021,85 @@ shiny::observeEvent(input$TADsHMM_branch,{
     })
 })
 
-shiny::observeEvent(input$TADsHMM_start,{
+shiny::observeEvent(input$directionalityIndex_start,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$runmodState<-"start"
+    output$moduleScreen<-shiny::renderUI({
+        moduleStartPanel2()
+    })
+})
+
+shiny::observeEvent(input$TopDomTADs_reStart,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$modset<-"Downstream"
+    rea$runmodState<-"restart"
+    output$moduleScreen<-shiny::renderUI({
+        moduleRestartPanel("Downstream")
+    })
+})
+
+shiny::observeEvent(input$TopDomTADs_branch,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$modset<-"Downstream"
+    rea$runmodState<-"branch"
+    output$moduleScreen<-shiny::renderUI({
+        moduleBranchPanel()
+    })
+})
+
+shiny::observeEvent(input$HiCsegTADs_start,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$runmodState<-"start"
+    output$moduleScreen<-shiny::renderUI({
+        moduleStartPanel2()
+    })
+})
+
+shiny::observeEvent(input$HiCsegTADs_reStart,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$modset<-"Downstream"
+    rea$runmodState<-"restart"
+    output$moduleScreen<-shiny::renderUI({
+        moduleRestartPanel("Downstream")
+    })
+})
+
+shiny::observeEvent(input$HiCsegTADs_branch,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$modset<-"Downstream"
+    rea$runmodState<-"branch"
+    output$moduleScreen<-shiny::renderUI({
+        moduleBranchPanel()
+    })
+})
+
+shiny::observeEvent(input$TopDomTADs_start,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$runmodState<-"start"
+    output$moduleScreen<-shiny::renderUI({
+        moduleStartPanel2()
+    })
+})
+
+shiny::observeEvent(input$bed2track_reStart,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$modset<-"Downstream"
+    rea$runmodState<-"restart"
+    output$moduleScreen<-shiny::renderUI({
+        moduleRestartPanel("bed2track")
+    })
+})
+
+shiny::observeEvent(input$bed2track_branch,{
+    #output$moduleScreen<-shiny::renderUI({})
+    rea$modset<-"Downstream"
+    rea$runmodState<-"branch"
+    output$moduleScreen<-shiny::renderUI({
+        moduleBranchPanel()
+    })
+})
+
+shiny::observeEvent(input$bed2track_start,{
     #output$moduleScreen<-shiny::renderUI({})
     rea$runmodState<-"start"
     output$moduleScreen<-shiny::renderUI({
@@ -1056,6 +1137,7 @@ shiny::observeEvent(input$Networks_start,{
     })
 })
 
+#================================================botton observer end
 
 ##======WELCOME================================================================
 
@@ -1068,9 +1150,10 @@ shiny::observeEvent(input$Networks_start,{
     # loadApp_prjSettings<-shiny::callModule(get(moduleLoad_prjSettings),
     #                                        tool_prjSettings)
     #
-
+    ##add new module:
     ##ogni nuovo modulo da aggiungere devi aggiungere un pezzo
     ##nell'observe della mainNav e una altro pezzo nell'observe dello startModule
+    ##cerca : input$startModule
     ##e devi mettere gli observe dei bottini start restart e branch
     ##MODULE STARTPANELS
     shiny::observeEvent (input$mainNav,{
@@ -1164,18 +1247,58 @@ shiny::observeEvent(input$Networks_start,{
             })
         }
 
-        if (input$mainNav == 'TADsHMM' &
+        if (input$mainNav == 'TopDomTADs' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
             output$moduleScreen<-shiny::renderUI({})
             output$selectPn<-shiny::renderUI({})
             #output$hmmSlot<-renderUI({moduleStartPanel("TADsHMM",
-            output$selectPn<-shiny::renderUI({moduleStartPanel("TADsHMM",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("TopDomTADs",
                                                         rea$anDir,
                                                         callModuleDescription(
-                                                            "TADsHMM")
+                                                            "TopDomTADs")
             )
             })
         }
+
+        if (input$mainNav == 'HiCsegTADs' &
+            file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
+            #output$hmmSlot<-renderUI({moduleStartPanel("TADsHMM",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("HiCsegTADs",
+                                                               rea$anDir,
+                                                               callModuleDescription(
+                                                                   "HiCsegTADs")
+            )
+            })
+        }
+
+        if (input$mainNav == 'directionalityIndex' &
+            file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
+            #output$hmmSlot<-renderUI({moduleStartPanel("TADsHMM",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("directionalityIndex",
+                                                               rea$anDir,
+                                                               callModuleDescription(
+                                                                   "directionalityIndex")
+            )
+            })
+        }
+
+        if (input$mainNav == 'bed2track' &
+            file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
+            output$moduleScreen<-shiny::renderUI({})
+            output$selectPn<-shiny::renderUI({})
+            #output$hmmSlot<-renderUI({moduleStartPanel("TADsHMM",
+            output$selectPn<-shiny::renderUI({moduleStartPanel("bed2track",
+                                                               rea$anDir,
+                                                               callModuleDescription(
+                                                                   "bed2track")
+            )
+            })
+        }
+
 
         if (input$mainNav == 'CompartmentsPCA' &
             file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
@@ -1384,10 +1507,10 @@ shiny::observeEvent(input$Networks_start,{
                     )
                 }
 
-                if (input$mainNav == 'TADsHMM' &
+                if (input$mainNav == 'directionalityIndex' &
                     file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
 
-                    tool_hmm <- 'HMM_postProcessing'
+                    tool_hmm <- 'directionalityIndex_postProcessing'
                     moduleUI_hmm<- paste0 (tool_hmm, '_UI')
                     moduleLoad_hmm<- paste0 (tool_hmm,'_Server')
                     #output$hmmSlot<-renderUI ({
@@ -1397,6 +1520,38 @@ shiny::observeEvent(input$Networks_start,{
                     loadApp_hmm <-  shiny::callModule(get(moduleLoad_hmm), tool_hmm,
                                                stringsAsFactors = FALSE,
                                                wdPath=rea$anDir
+                    )
+                }
+
+                if (input$mainNav == 'TopDomTADs' &
+                    file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
+
+                    tool_hmm <- 'TopDomTADs_postProcessing'
+                    moduleUI_hmm<- paste0 (tool_hmm, '_UI')
+                    moduleLoad_hmm<- paste0 (tool_hmm,'_Server')
+                    #output$hmmSlot<-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
+                        get(moduleUI_hmm) (tool_hmm,label='helpingUI')
+                    })
+                    loadApp_hmm <-  shiny::callModule(get(moduleLoad_hmm), tool_hmm,
+                                                      stringsAsFactors = FALSE,
+                                                      wdPath=rea$anDir
+                    )
+                }
+
+                if (input$mainNav == 'HiCsegTADs' &
+                    file.exists(paste0(rea$anDir, 'info.tsv'))==TRUE ){
+
+                    tool_hmm <- 'HiCsegTADs_postProcessing'
+                    moduleUI_hmm<- paste0 (tool_hmm, '_UI')
+                    moduleLoad_hmm<- paste0 (tool_hmm,'_Server')
+                    #output$hmmSlot<-renderUI ({
+                    output$selectPn <-shiny::renderUI ({
+                        get(moduleUI_hmm) (tool_hmm,label='helpingUI')
+                    })
+                    loadApp_hmm <-  shiny::callModule(get(moduleLoad_hmm), tool_hmm,
+                                                      stringsAsFactors = FALSE,
+                                                      wdPath=rea$anDir
                     )
                 }
 
@@ -1414,6 +1569,38 @@ shiny::observeEvent(input$Networks_start,{
                                                           tool_pcaComp,
                                                           stringsAsFactors = FALSE,
                                                           wdPath=rea$anDir)
+                }
+
+                if (input$mainNav == 'TopDomTADs' & file.exists(paste0(
+                    rea$anDir, 'info.tsv'))==TRUE ){
+                    #source ('pcaComp_postProcessing.R')
+                    tool_tdtadsComp <- 'TopDomTADs_postProcessing'
+                    moduleUI_tdtadsComp<- paste0 (tool_tdtadsComp, '_UI')
+                    moduleLoad_tdtadsComp<- paste0 (tool_tdtadsComp,'_Server')
+                    #output$pcaCompSlot<- shiny::renderUI({
+                    output$selectPn <-shiny::renderUI ({
+                        get(moduleUI_tdtadsComp) (tool_tdtadsComp,label='TopDomTADs')
+                    })
+                    loadApp_tdtadsComp <-  shiny::callModule(get(moduleLoad_tdtadsComp),
+                                                          tool_tdtadsComp,
+                                                          stringsAsFactors = FALSE,
+                                                          wdPath=rea$anDir)
+                }
+
+                if (input$mainNav == 'bed2track' & file.exists(paste0(
+                    rea$anDir, 'info.tsv'))==TRUE ){
+                    #source ('pcaComp_postProcessing.R')
+                    tool_tdtadsComp <- 'bed2track_postProcessing'
+                    moduleUI_tdtadsComp<- paste0 (tool_tdtadsComp, '_UI')
+                    moduleLoad_tdtadsComp<- paste0 (tool_tdtadsComp,'_Server')
+                    #output$pcaCompSlot<- shiny::renderUI({
+                    output$selectPn <-shiny::renderUI ({
+                        get(moduleUI_tdtadsComp) (tool_tdtadsComp,label='bed2track')
+                    })
+                    loadApp_tdtadsComp <-  shiny::callModule(get(moduleLoad_tdtadsComp),
+                                                             tool_tdtadsComp,
+                                                             stringsAsFactors = FALSE,
+                                                             wdPath=rea$anDir)
                 }
 
                 #EpigeneticFeatures

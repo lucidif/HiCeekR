@@ -1,7 +1,7 @@
 ##diffHiC_normalization
 
 # Module UI function
-#' diffHic_Normalization_UI
+#' bckdiffHic_Normalization_UI
 #'
 #' @param id
 #' @param label
@@ -10,7 +10,7 @@
 #' @keywords internal
 #'
 #' @examples
-diffHic_Normalization_UI <- function(id, label = "Visualization") {
+bckdiffHic_Normalization_UI <- function(id, label = "Visualization") {
     diffHicNormNs <- NS(id)
 
     shiny::fluidPage(
@@ -248,7 +248,7 @@ diffHic_Normalization_UI <- function(id, label = "Visualization") {
 
 # Module server function
 
-#' diffHic_Normalization_Server
+#' bckdiffHic_Normalization_Server
 #'
 #' @param input
 #' @param output
@@ -260,7 +260,7 @@ diffHic_Normalization_UI <- function(id, label = "Visualization") {
 #' @keywords internal
 #'
 #' @examples
-diffHic_Normalization_Server <- function(input, output, session,
+bckdiffHic_Normalization_Server <- function(input, output, session,
                                          stringsAsFactors, wdPath) {
 
 

@@ -8,7 +8,7 @@
 #' @keywords internal
 #'
 #' @examples
-HMM_postProcessing_UI <- function(id, label = "TADs") {
+directionalityIndex_postProcessing_UI <- function(id, label = "TADs") {
     hmmNs <- shiny::NS(id)
     shiny::fluidPage(
 
@@ -82,7 +82,7 @@ HMM_postProcessing_UI <- function(id, label = "TADs") {
 #' @keywords internal
 #'
 #' @examples
-HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
+directionalityIndex_postProcessing_Server <- function(input, output, session, stringsAsFactors,
                                         wdPath) {
     hmmNs<-session$ns
 
@@ -107,7 +107,7 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
             shiny::fluidRow(
 
                 shiny::column (4,
-                    shiny::actionButton(hmmNs('startBut'), label=h5('find TADs'))
+                    shiny::actionButton(hmmNs('startBut'), label=h5('find DI'))
                 ),
 
                 shiny::column (8,
@@ -182,9 +182,9 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
         di<-as.matrix(di)
         bin<-"di"
         di<-rbind(bin,di)
-        write.table(di,paste0(outpath,"/",intChr,"_hmm.tsv"),sep="\t",quote=FALSE,col.names = FALSE, row.names =TRUE)
+        write.table(di,paste0(outpath,"/",intChr,"_di.tsv"),sep="\t",quote=FALSE,col.names = FALSE, row.names =TRUE)
 
-        predictedTADs<-predictTADs(paste0(outpath,"/",intChr,"_hmm.tsv"),saveBed = paste0(outpath,"/",intChr,"_predTADs.bed"))
+        predictedTADs<-predictTADs(paste0(outpath,"/",intChr,"_di.tsv"),saveBed = paste0(outpath,"/",intChr,"_predTADs.bed"))
 
         #write.table(di,paste0(outpath,"/hmm.tsv"),sep="\t",quote=FALSE,col.names = FALSE, row.names =TRUE)
 
@@ -266,7 +266,7 @@ HMM_postProcessing_Server <- function(input, output, session, stringsAsFactors,
                 shiny::fluidRow(
 
                     shiny::column (4,
-                                   shiny::actionButton(hmmNs('startBut'), label=h5('find TADs'))
+                                   shiny::actionButton(hmmNs('startBut'), label=h5('find DI'))
                     ),
 
                     shiny::column (8,
