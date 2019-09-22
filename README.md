@@ -64,7 +64,28 @@ b) Example.zip e contains an example of all input files supported by HiCeekR:
 ## Session info
 
 ````
- R.utils_2.9.0               HiTC_1.28.0                 tidyselect_0.2.5           
+R version 3.6.1 (2019-07-05)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 18.04.2 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
+
+locale:
+ [1] LC_CTYPE=it_IT.UTF-8       LC_NUMERIC=C               LC_TIME=it_IT.UTF-8       
+ [4] LC_COLLATE=it_IT.UTF-8     LC_MONETARY=it_IT.UTF-8    LC_MESSAGES=it_IT.UTF-8   
+ [7] LC_PAPER=it_IT.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
+[10] LC_TELEPHONE=C             LC_MEASUREMENT=it_IT.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] shiny_1.3.2    HiCeekR_0.99.0
+
+loaded via a namespace (and not attached):
+  [1] R.utils_2.9.0               HiTC_1.28.0                 tidyselect_0.2.5           
   [4] heatmaply_0.16.0            RSQLite_2.1.2               AnnotationDbi_1.46.1       
   [7] htmlwidgets_1.3             grid_3.6.1                  TSP_1.1-7                  
  [10] BiocParallel_1.18.1         devtools_2.2.0              munsell_0.5.0              
@@ -125,17 +146,6 @@ b) Example.zip e contains an example of all input files supported by HiCeekR:
 [175] iterators_1.0.12            bit_1.1-14                  Rgraphviz_2.28.0           
 [178] stringi_1.4.3               blob_1.2.0                  DESeq2_1.24.0              
 [181] latticeExtra_0.6-28         caTools_1.17.1.2            memoise_1.1.0              
-[184] dplyr_0.8.3                 TopDom_0.8.1                
-[1] ""
-[1] "preWd"
-[1] "load config wd:/media/lucio/data/1.Bioinformatic/HCR.config"
-[1] "config: /media/lucio/data/1.Bioinformatic/HCR.config"
-[1] "working dir:/media/lucio/data/1.Bioinformatic/1.heavyWD/1.R/test4/"
-[1] "postWd"
-[1] "workingDir"
-[1] FALSE
-[1] "prjDir:/media/lucio/data/1.Bioinformatic/1.heavyWD/1.R/test4/"
-[1] "wkDir: /media/lucio/data/1.Bioinformatic/1.heavyWD/1.R/test4/HiCeekRwd/"  
-
+[184] dplyr_0.8.3                 TopDom_0.8.1
 ````
 
