@@ -1,6 +1,6 @@
 # HiCeekR
-HiCeekR is a novel Shiny based R package for Hi-C data analysis. In particular, HiCeekR
-combines several R/Bioconductor packages widely used for Hi-C data analysis and visualization. It
+HiCeekR is a novel Shiny based R package for Hi-C data analysis. 
+HiCeekR combines several R/Bioconductor packages widely used for Hi-C data analysis and visualization. It
 starts from already aligned sequence files obtained from Hi-C experiments, then proceeds through a
 series of steps from pre-processing and filtering, to the evaluation and normalization of the contact
 matrices. Once the contact matrices are available, HiCeekR allows the users to perform several
@@ -11,11 +11,15 @@ perform a complete data analysis pipeline (i.e., pre-processing, filtering, binn
 identification of compartments and TADs) and to integrate Hi-C data with other omic datasets such as
 ChIP-seq and RNA-seq.
 
+# References
+If you're using HiCeekR for your analysis please cite: 
+Di Filippo, L., Righelli, D., Gagliardi, M., Matarazzo, M. R., & Angelini, C. (2019). HiCeekR: a novel Shiny app for Hi-C data analysis. Frontiers in Genetics, 10, 1079. https://doi.org/10.3389/fgene.2019.01079
+ 
 ## Installation
 
 The easiest way to install HiCeekR is via GitHub performing the following steps:
-i) Download and install devtools R package from CRAN web site.
-Open R console and digit:
+i) Download and install the devtools R package from CRAN web site.
+Open the R console and digit:
 
 ````
 install.packages("devtools")
@@ -28,13 +32,13 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 ````
 
-iii) Now install HiCeekR using the command
+iii) Now install HiCeekR using the command:
 
 ````
 library(devtools) ; install_github("HenrikBengtsson/TopDom") ; install_github("lucidif/HiCeekR", repos=BiocManager::repositories())
 ````
 
-## To get start
+## Get started
 
 Once installed, launch HiCeekR Shiny app with the following commands:
 
@@ -42,23 +46,23 @@ Once installed, launch HiCeekR Shiny app with the following commands:
 library(HiCeekR)
 HiCeekR()
 ````
-For more details, please consult hiceek_manual.pdf documentation (https://github.com/lucidif/HiCeekR/blob/master/hiceekr_manual.pdf)
+For more details, please consult the documentation (https://github.com/lucidif/HiCeekR/blob/master/hiceekr_manual.pdf)
 
 ## Example Data
 
-In order to understand and test HiCeekR functionalities, please use the data available at http://bioinfo.na.iac.cnr.it/hiceekr 
+In order to understand and test HiCeekR functionalities, we provided some example data, available at http://bioinfo.na.iac.cnr.it/hiceekr 
 
-In particular, ou can download two foldes
+Two folders are available:
 
-a) Annotations.zip  contains the reference genome in fasta format and the HiCeekR annotations tsv file.
+a) Annotations.zip  contains the reference genome in FASTA format and the HiCeekR annotations tsv files.
 
-b) Example.zip e contains an example of all input files supported by HiCeekR:
+b) Example.zip contains an example of all input files supported by HiCeekR:
 
-   1)sortmark_REP7_SRR1802426.bam and sortmark_REP5_SRR1802424.bam Hi-C aligned reads files (Grubert 2015, GSE62742)
+   1) sortmark_REP7_SRR1802426.bam and sortmark_REP5_SRR1802424.bam Hi-C aligned reads files (Grubert 2015, GSE62742)
     
-   2)ENCFF000ATY_H3K9ac_GM12878_hg19.bam/.bai and H3K27me3.bam/.bai ChiP-seq Bam files from ENCODE (ENCSR447YYN) and their        index .bai files.
+   2) ENCFF000ATY_H3K9ac_GM12878_hg19.bam/.bai and H3K27me3.bam/.bai ChiP-seq Bam files from ENCODE (ENCSR447YYN) and their        index .bai files.
     
-   3)GSM2400247_ENCFF383EXA_gm12878_rnaSeq.tsv expression RNA-Seq Data from ENCODE (ENCFF383EXA)
+   3) GSM2400247_ENCFF383EXA_gm12878_rnaSeq.tsv expression RNA-Seq Data from ENCODE (ENCFF383EXA)
 
 
 ## Session info
