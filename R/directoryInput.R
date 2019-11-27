@@ -76,7 +76,7 @@ if (Sys.info()['sysname'] == 'Darwin') {
 #' @param value Initial value.  Paths are exapnded via \code{\link{path.expand}}.
 #'
 #' @details
-#' This widget relies on \link{\code{choose.dir}} to present an interactive
+#' This widget relies on \code{\link{choose.dir}} to present an interactive
 #' dialog to users for selecting a directory on the local filesystem.  Therefore,
 #' this widget is intended for shiny apps that are run locally - i.e. on the
 #' same system that files/directories are to be accessed - and not from hosted
@@ -139,7 +139,7 @@ directoryInput = function(inputId, label, value = NULL) {
 #' @param session The \code{session} object passed to function given to \code{shinyServer}.
 #' @param inputId The id of the input object.
 #' @param value A directory path to set
-#' @param ... Additional arguments passed to \link{\code{choose.dir}}.  Only used
+#' @param ... Additional arguments passed to \code{\link{choose.dir}}.  Only used
 #'    if \code{value} is \code{NULL}.
 #'
 #' @details
