@@ -205,7 +205,7 @@ chromoR_Normalization_Server <- function(input, output, session,
         #sarà stato nello script con ::
         # i pacchatti caricati da chromoR sono 3 haarfisz wavethresh MASS
         library(haarfisz)
-        norMa<-chromoR::correctCIM(m2, seg2, removeUncovered = remUnc)
+        norMa<-correctCIM(m2, seg2, removeUncovered = remUnc)
 
 
         #View(head(norMa))
