@@ -915,7 +915,7 @@ networksV2_Visualization_Server <- function(input, output,
                 #check name univocity
                 if (length(unique(as.character(impTab[,1])))!=length(impTab[,1])){
                     print("no unique names in exprTable")
-                    geterrmessage("no unique names in exprTable")
+                    geterrmessage()
                     stop()
                 }
                 rownames(impTab)<-impTab[,1]
