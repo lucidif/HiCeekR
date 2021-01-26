@@ -691,7 +691,8 @@ bckdiffHic_Normalization_Server <- function(input, output, session,
         }
 
         saveMe$size=summa
-        saveMe$intSet<- makeInset (tabPath, rebuildTotals=TRUE, lib.size=saveMe$size)
+        #saveMe$intSet<- makeInset (tabPath, rebuildTotals=TRUE, lib.size=saveMe$size)
+        saveMe$intSet<- makeInset (tabPath)
         # redTT<<-red
         # print (regions(red))
         # #unique (seqnames(regions))
